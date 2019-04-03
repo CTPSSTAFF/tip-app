@@ -69,27 +69,27 @@
 #proj_safety table tr td:first-child {
     vertical-align: top;
     font-weight: bold;
-    width: 360px;
+    width: 450px;
 }
 #proj_sys_preservation table tr td:first-child {
     vertical-align: top;
     font-weight: bold;
-    width: 460px;
+    width: 540px;
 }
 #proj_capacity_mgt table tr td:first-child {
     vertical-align: top;
     font-weight: bold;
-    width: 360px;
+    width: 460px;
 }
 #proj_clean table tr td:first-child {
     vertical-align: top;
     font-weight: bold;
-    width: 450px;
+    width: 500px;
 }
 #proj_tequity table tr td:first-child {
     vertical-align: top;
     font-weight: bold;
-    width: 420px;
+    width: 450px;
 }
 #proj_economic table tr td:first-child {
     vertical-align: top;
@@ -113,10 +113,21 @@
     font-weight: bold;
     width: 200px;
 }
-#proposed_funding_table tr > td;first-child {
+#current_funding_table tr > td:nth-child(1) {
     font-weight: bold;
-    width: 200px;
+    width: 16.66%;
 }
+#current_funding_table tr > td:nth-child(1n+1) {
+    width: 16.66%
+}
+#proposed_funding_table tr > td:nth-child(1) {
+    font-weight: bold;
+    width: 16.66%
+}
+#proposed_funding_table tr > td:nth-child(1n+1) {
+    width: 16.66%
+}
+
 /* 'Stripe' rows in tables presenting project data */
 .tabbody table tr:nth-child(odd) { 
     background: AliceBlue; 
