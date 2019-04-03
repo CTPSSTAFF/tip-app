@@ -28,39 +28,19 @@ $(document).ready(function() {
     var grid = null;
     var gridOptions = { enableColumnReorder : false, autoHeight: true };
     // Stuff for grid columns
-    var moneyFormatter =  function(row, cell, value, columnDef, dataContext) { 
-                              var retval, parts;
-                              if (value != null) {
-                                  parts = (value + '').split('.');
-                                  if (parts.length === 1) {
-                                      // No decimal point ==> No digits to right of decimal point
-                                      retval = (+parts[0]).toLocaleString() + '.00';
-                                  } else if (parts[1].length === 1) {
-                                      // Here: unabashed assumtption that parts.length === 2
-                                      // Case 1: One digit to the right of decimal point ==> provide final '0'
-                                      retval = (+parts[0]).toLocaleString() + '.' + parts[1] + '0';
-                                  } else {
-                                      // Case 2 (Unabashed assumption): two digits to right of decimal point
-                                      retval = (+parts[0]).toLocaleString() + '.' + parts[1];
-                                  }
-                              } else {
-                                  retval = '';
-                              }
-                              return retval;
-                          } // moneyFormatter()
     // N.B. The width values reflect the jQueryUI font size being throttled-back to 80% of its default size in tipApp.css
     var gridColumns = [ { id : 'tip_id_col',    name : 'TIP ID',       field : 'tip_id', width : 80, sortable: true,
                           formatter : function(row, cell, value, columnDef, dataContext) {
                                           return '<a href=tipDetail.html?tip_id=' + value + ' target="_blank">' + value + '</a>';
                                       } 
                         },
-                        { id : 'proj_name_col',       name : 'Project Name',              field : 'proj_name',      width : 650, sortable : false }, 
-                        { id : 'proj_cat_col',        name : 'Category',                  field : 'proj_cat',       width : 150, sortable : true },
-                        { id : 'town_col',            name : 'Municipality',              field : 'town',           width : 150, sortable : true },
-                        { id : 'cur_cost_est_col',    name : 'Current Cost Estimate ($)', field : 'cur_cost_est',   width : 170, sortable : true, 
-                          cssClass : 'moneyColumn',   formatter : moneyFormatter }, 
-                        { id : 'amt_programmed_col',  name : 'Amount Programmed ($)',     field : 'amt_programmed', width : 170, sortable : true, 
-                          cssClass : 'moneyColumn',   formatter: moneyFormatter  } 
+                        { id : 'proj_name_col',       name : 'Project Name',              field : 'proj_name',       width : 800, sortable : false }, 
+                        { id : 'proj_cat_col',        name : 'Category',                  field : 'proj_cat',        width : 150, sortable : true },
+                        { id : 'town_col',            name : 'Municipality',              field : 'town',            width : 150, sortable : true },
+                        { id : 'cur_cost_est_col',    name : 'Current Cost Estimate',     field : 'cur_cost_est',    width : 150, sortable : true, 
+                          cssClass : 'moneyColumn',   formatter : tipCommon.moneyFormatter },                         
+                        { id : 'first_year_prog',     name : 'First Year Programmed',     field : 'first_year_prog', width:  150,  sortable : true, 
+                          cssClass : 'dateColumn' }
                      ];
     // Slick Grid 'dataView' object
     var dataView = null;    
@@ -70,8 +50,8 @@ $(document).ready(function() {
                         { header : 'Project Name',            dataIndex : 'proj_name' },
                         { header : 'Category',                dataIndex : 'proj_cat' },
                         { header : 'Municipality',            dataIndex : 'town' },
-                        { header : 'Current Cost Estimate',   dataIndex : 'cur_cost_est',   cls : 'moneyColumn', renderer : moneyFormatter },
-                        { header : 'Amount Programmed',       dataIndex : 'amt_programmed', cls : 'moneyColumn', renderer : moneyFormatter } ];
+                        { header : 'Current Cost Estimate',   dataIndex : 'cur_cost_est',   cls : 'moneyColumn', renderer : tipCommon.moneyFormatter },
+                        { header : 'First Year Programmed',   dataIndex : 'first_year_prog' } ];
     var accGridOptions = { div_id    : 'project_list_contents_accessible',
                            table_id  : 'project_list_accessible',
                            caption   : 'Table of TIP Projects',
@@ -212,6 +192,31 @@ $(document).ready(function() {
             oOption.text =  aCategories[i].properties['proj_cat'];
             oSelect.options.add(oOption); 
         }
+        
+        // Populate the <select> box for 'first year programmed'
+        // First have to create list of unique 'first year programmed's and sort it
+        var aTmp =[];
+        for (i = 0; i < DATA.projects.length; i++) {
+            if (DATA.projects[i].properties['first_year_prog'] != null) {
+                aTmp.push(DATA.projects[i].properties['first_year_prog']);
+            }
+        }
+        aTmp = _.uniq(aTmp);
+        aTmp = aTmp.sort();
+        oSelect = document.getElementById("select_first_yr_prog");
+        oOption = document.createElement("OPTION");
+        oOption.text = "Any";
+        oOption.value = 0;
+        oSelect.options.add(oOption); 
+        for (i = 0; i < aTmp.length; i++) {				
+            oOption = document.createElement("OPTION");
+            oOption.value = aTmp[i];
+            oOption.text =  aTmp[i];
+            oSelect.options.add(oOption); 
+        }   
+
+        // Hide the 'Download' button until there's something to download
+        $('#downloadButton').hide();
   
         // Arm on-click event handler for the 'Search' button
         $('#searchButton').click(function queryProjects(e) {
@@ -222,8 +227,9 @@ $(document).ready(function() {
             // If more than one search criterion was selected, search on the logical AND of these
             var town_id = +($('#select_town option:selected').val());   // Convert string to number
             var category = $('#select_proj_category option:selected').val();
+            var first_year = +$('#select_first_yr_prog option:selected').val();
             var tip_id = $('#select_tip_id option:selected').val();
-
+            var ltrp_projects = $('#lrtp_project').prop('checked');
             var results = DATA.projects_JOIN;    
             
             // 1. Did the search specify a town?
@@ -239,7 +245,19 @@ $(document).ready(function() {
                 // Sort results in order of ascending town_id
                 results.sort(function(a,b) { return a.properties['town_id'] - b.properties['town_id']; });
             } 
-            // 3. Did the search specify a TIP ID?
+            // 3. Did the search specify a 'first year programmed'?
+            if (first_year !== 0) {
+                predicate = function(proj_join_rec) { return proj_join_rec.properties['first_year_prog'] === first_year; };
+                results = _.filter(results, predicate);
+                results.sort(function(a,b) { return a.properties['town_id'] - b.properties['town_id']; });
+            }
+            // 4. Was the search for LRTP projects (only)?
+            if (lrtp_project == true) {
+                predicate = function(proj_join_rec) { return proj_join_rec.properties['lrtp_project'] === true; };
+                results = _.filter(results, predicate);
+                results.sort(function(a,b) { return a.properties['town_id'] - b.properties['town_id']; });               
+            }
+            // 5. Did the search specify a TIP ID?
             if (tip_id !== '0') {
                 // Since there *should* be only one such record, we *should* be able to use _.find,
                 // but I'm using _.filter "just in case" the data is funky, which it's been known to be.
@@ -248,6 +266,8 @@ $(document).ready(function() {
             }
             displayProjects(results);
         }); // on-click event handler for 'Search' button
+        
+
     }); // handler for 'when loading of data is done' event
     
     // Generate a Google Maps "marker" pin symbol with the specified color.
@@ -262,33 +282,6 @@ $(document).ready(function() {
             scale: 1,
        };
     } // pinSybol()   
-
-    // Given a tip_projects record, return the color in which to symbolize the project based on the project's 'category'
-    function projCategoryToColor(project) {
-        var pcat = project.properties['proj_cat'];
-        var retval;
-        switch(pcat) {
-        case 'Arterial and Intersection':
-            retval = '#e661ac';
-            break;
-        case 'Bicycle and Pedestrian':
-            retval = '#fd7567';
-            break;
-        case 'Bridge':
-            retval = '#6991fd';
-            break;
-        case 'Major Highway':
-            retval = '#ff9900';
-            break;
-        case 'Transit': 
-            retval = '#00e64d';
-            break;
-        default:
-            retval = '#050505';
-            break;
-        }
-        return retval;
-    } // projTypeToColor
 
     function displayProjects(aProjects) {
         var i, sRawUrl, sUrl, tip_id, ctps_id, project_town_id, tip_spatial_rec, marker, pos, googleBounds, googleBoundsInit;
@@ -314,7 +307,7 @@ $(document).ready(function() {
                          'proj_cat'       : aProjects[i].properties['proj_cat'],
                          'town'           : aProjects[i].properties['town'],
                          'cur_cost_est'   : aProjects[i].properties['cur_cost_est'],
-                         'amt_programmed' : aProjects[i].properties['amt_programmed']
+                         'first_year_prog': aProjects[i].properties['first_year_prog']
                        };
             // If the project has a geographic representation, generate a Google Maps marker 
             if (aProjects[i].properties['has_geo'] === -1) {
@@ -331,7 +324,7 @@ $(document).ready(function() {
                     marker = new google.maps.Marker({ position: pos,
                                                       map: map,
                                                       title: 'Project ' + aProjects[i].properties['tip_id'],
-                                                      icon: pinSymbol(projCategoryToColor(aProjects[i]))
+                                                      icon: pinSymbol(tipCommon.projCategoryToColor(aProjects[i]))
                                                     });
                     // Squirrel away various pieces of useful info about the project as a property of the marker object
                     var ctpsProps = {};
@@ -380,6 +373,50 @@ $(document).ready(function() {
         // Lastly, if the search returned no results, inform the user
         if (aData.length === 0) {
             alert('The search found no projects.');
+        } else {
+            $('#downloadButton').show();
         }
+        
+        // Arm event handler for data download
+        $('#downloadButton').click(function donwloadData(e) {
+            // The following function is currently not used:
+            function ConvertToCSV(objArray) {
+                var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+                var str = '';
+                for (var i = 0; i < array.length; i++) {
+                    var line = '';
+                    for (var index in array[i]) {
+                        if (line != '') line += ','
+                            line += array[i][index];
+                    }
+                    str += line + '\r\n';
+                }
+                return str;
+            } // convertToCSV()
+            // Make the data in aData ready for download:
+            // Remove 'id' field (required by SlickGrid) from each record
+            aData.forEach(function(record) {
+                delete record.id;
+                var regx = /,/g;
+            });
+            // Create string of data to be downloaded
+            var newstring = '';
+            gridColumns.forEach(function(column) {
+                newstring += "'" + column['name'] + "',";
+            });
+            newstring += '\n';
+            aData.forEach(function(record) {
+               newstring += record.tip_id + ',';
+               newstring += '"' + record.proj_name + '"' + ','; // N.B. This field may contain commas!
+               newstring += record.proj_cat + ',';
+               newstring += record.town + ',';
+               newstring += record.cur_cost_est + ',';
+               newstring += record.first_year_prog;
+               newstring += '\n';
+            });
+           //  newstring += ConvertToCSV(aData);
+            sessionStorage.setItem("sent", newstring); 
+            download(newstring, "tip_project_list.csv", "text/csv");
+        }); // on-click event handler for 'Download' button 
     } // displayProjects()  
 });	// $(document).ready event handler

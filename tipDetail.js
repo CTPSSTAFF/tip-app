@@ -3,6 +3,9 @@
 // Date:    Dec 2018 - Jan 2019
 $(document).ready(function() {
     // Stuff pertaining to retrieval of data from TIP database, and the data itself:
+    //
+    // Note that the following must be VIEWS in the underlying PostgreSQL database:
+    //     tip_projects, bridge_component, project_town, project_proponent, funding, amendment, project_town_list, project_proponent_list
     //  
     var wfsServerRoot = location.protocol + '//' + location.hostname + ':8080/geoserver/wfs';
     var projectsURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_projects_view&outputformat=json';
@@ -14,7 +17,14 @@ $(document).ready(function() {
     var fundingURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_funding_view&outputformat=json';
     var amendmentURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_project_amendment_view&outputformat=json';
     var city_town_lutURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_city_town_lookup&outputformat=json';
-    var contactsURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_contacts&outputformat=json';    
+    var contactsURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_contacts&outputformat=json';   
+    // var proj_catURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_lut_proj_cat&outputformat=json';
+        // Maps the ctps_id of a project to a string containing the names(s) of the towns in which the project is located
+    var project_town_listURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_project_town_list_view&outputformat=json';
+    
+        // Maps the ctps_id of a project to a string contining the name(s) of the project's proponents
+    var project_proponent_listURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_project_proponent_list_view&outputformat=json';
+    
      // Global "database" of JSON returned from WFS requests
     var DATA = {};    
  
@@ -48,34 +58,7 @@ $(document).ready(function() {
     // will raise an error. We are compelled to force a "bounds_changed" event to fire.
     // Larry and Sergey: How did you let this one get through the cracks, guys? C'mon!
     map.setCenter(new google.maps.LatLng(regionCenterLat + 0.000000001, regionCenterLng  + 0.000000001));      
-    
-    // Utility function: Given a tip_projects record, return the color in which to symbolize the project based on the project's 'category'
-    function projCategoryToColor(project) {
-        var pcat = project.properties['proj_cat'];
-        var retval;
-        switch(pcat) {
-        case 'Arterial and Intersection':
-            retval = '#e661ac';
-            break;
-        case 'Bicycle and Pedestrian':
-            retval = '#fd7567';
-            break;
-        case 'Bridge':
-            retval = '#6991fd';
-            break;
-        case 'Major Highway':
-            retval = '#ff9900';
-            break;
-        case 'Transit': 
-            retval = '#00e64d';
-            break;
-        default:
-            retval = '#050505';
-            break;
-        }
-        return retval;
-    } // projTypeToColor()
-    
+ 
     // Utility function to return the value of the parameter named 'sParam' from the window's URL
     function getURLParameter(sParam) {
         var sPageURL = window.location.search.substring(1);
@@ -94,7 +77,12 @@ $(document).ready(function() {
     // Machinery to load data and populate the local "database" (i.e,, "DATA" object):
     // 
     var getJson = function(url) {
-        return $.get(url, null, 'json');
+        var tmp = $.get(url, null, 'json');
+        return tmp;
+    };
+    var getCsv = function(url) {
+        var tmp = $.get(url, null, 'csv');
+        return tmp;
     };
     $.when(getJson(projectsURL), 
            getJson(eval_criteriaURL), 
@@ -105,9 +93,21 @@ $(document).ready(function() {
            getJson(fundingURL), 
            getJson(amendmentURL), 
            getJson(city_town_lutURL), 
-           getJson(contactsURL)
-    ).done(function(projects, eval_criteria, bridge_component, bridge_data, proj_town, 
-                    proj_proponent, funding, amendment, city_town_lut, contacts, proj_cat) {
+           getJson(contactsURL),
+           getJson(project_town_listURL),
+           getJson(project_proponent_listURL)
+    ).done(function(projects, 
+                    eval_criteria, 
+                    bridge_component, 
+                    bridge_data, 
+                    proj_town, 
+                    proj_proponent, 
+                    funding, 
+                    amendment, 
+                    city_town_lut,
+                    contacts,  
+                    project_town_list, 
+                    project_proponent_list) {
         var ok = _.every(arguments, function(arg) { return arg[1] === "success"; });
         if (ok === false) {
             alert("One or more WFS requests failed. Exiting application.");
@@ -123,10 +123,12 @@ $(document).ready(function() {
         DATA.amendment = amendment[0].features;
         DATA.city_town_lut = city_town_lut[0].features;
         DATA.contacts = contacts[0].features;
+        DATA.project_town_list = project_town_list[0].features;       
+        DATA.project_proponent_list = project_proponent_list[0].features;        
        
         var tip_id = getURLParameter('tip_id');
         var p = _.find(DATA.projects, function(project) { return project.properties['tip_id'] === tip_id; });
-        if (p.length === 0) {
+        if (p == null || p.length === 0) {
             alert('failed to find project with TIP ID ' + tip_id + ' in projects JSON.');
             return;
         }
@@ -143,9 +145,9 @@ $(document).ready(function() {
                                         var gmPolyline = {}; lineFeature = {}, aFeatCoords = [], point = {}, aAllPoints = [], bbox = [], googleBounds = {};
                                         var i, j, colour;
                                         lineFeature = data.features[0];
-                                        colour = projCategoryToColor(p);
+                                        colour = tipCommon.projCategoryToColor(p);
                                         if (lineFeature.geometry.type === 'MultiLineString') {
-                                            console.log('Rendering MultiLintString feature with TIP ID  ' + lineFeature.properties['tip_id']);
+                                            // console.log('Rendering MultiLintString feature with TIP ID  ' + lineFeature.properties['tip_id']);
                                             aFeatCoords = lineFeature.geometry.coordinates;
                                             for (i = 0; i < aFeatCoords.length; i++) {
                                                 aAllPoints = [];
@@ -162,7 +164,7 @@ $(document).ready(function() {
                                                                                         strokeWeight    : 6 });
                                             } // for i in aFeatureCoords.length
                                         } else if (lineFeature.geometry.type === 'LineString') {
-                                            console.log('Rendering LintString feature with TIP ID  ' + lineFeature.properties['tip_id']);
+                                            // console.log('Rendering LineString feature with TIP ID  ' + lineFeature.properties['tip_id']);
                                             aFeatCoords = lineFeature.geometry.coordinates;
                                             for (i = 0; i < aFeatCoords.length; i++ ) {
                                                 aCoord = aFeatCoords[i];
@@ -195,15 +197,59 @@ $(document).ready(function() {
     
     // Display tabular data for the project whose tip_project record has been passed as parameter 'p'
     function displayTabularData(p) {
+        var tmp;
+        
         $('#project_detail_header').html('TIP Project ' + p.properties['tip_id'] + ' : ' + p.properties['proj_name']);
-      
-        $('.proj_data').empty();  
+        $('.proj_data').empty(); 
+        
         // Overview tab
         $('#tip_id').html(p.properties['tip_id']);
-        $('#projis').html(p.properties['projis']);
         $('#proj_name').html(p.properties['proj_name']);
         $('#proj_desc').html(p.properties['proj_desc']);
         $('#proj_cat').html(p.properties['proj_cat']);
+        
+        // Municipality OR Municipalities
+        var ctps_id, munis, town_id, town_rec, town_name, munis_rec, munis_str;
+        ctps_id = p.properties['ctps_id'];
+        munis = _.filter(DATA.proj_town, function(proj) { return proj.properties['ctps_id'] === ctps_id; });
+        if (munis.length === 1) {
+            town_id = munis[0].properties['town_id'];
+            town_rec = _.find(DATA.city_town_lut, function(lut_rec) { return lut_rec['id'] === 'tip_city_town_lookup.' + town_id });
+            town_name = town_rec.properties['town_name'];
+            $('#muni_or_munis').html(town_name);
+        } else {
+            $('#municipality_header').html('Municipalities');
+             munis_rec = _.find(DATA.project_town_list, function(pt_list_rec) { return pt_list_rec.properties['ctps_id'] === ctps_id });
+            if (munis_rec != null && munis_rec.length != 0) {
+                munis_str = munis_rec.properties['towns'];
+            } else {
+                munis_str = '';
+            }
+            $('#muni_or_munis').html(munis_str);
+        }
+        
+        // Proponent OR Proponents
+        // Note: Project 'proponents' are listed in the city_town_lookup table.
+        //       'Proponents' include cities/towns AND a few other entitles, e.g., MassDOT, 
+        //       the MBTA, etc., each of which is given a 'town_id' (yeech!) as a unique identifier.
+        var props, prop, props_rec, prop_name, props_str;
+        props = _.filter(DATA.proj_proponent, function(proj) { return proj.properties['ctps_id'] === ctps_id; });
+        if (props.length === 1) {
+            town_id = props[0].properties['town_id'];
+            prop_rec = _.find(DATA.city_town_lut, function(lut_rec) { return lut_rec['id'] === 'tip_city_town_lookup.' + town_id });
+            prop_name = prop_rec.properties['town_name'];
+            $('#proponent_or_proponents').html(prop_name);
+        } else {
+            $('#proponent_header').html('Proponents');
+             props_rec = _.find(DATA.project_town_list, function(pt_list_rec) { return pt_list_rec.properties['ctps_id'] === ctps_id });
+            if (props_rec != null && props_rec.length != 0) {
+                props_str = props_rec.properties['proponents'];
+            } else {
+                props_str = '';
+            }
+            $('#proponent_or_proponents').html(props_str);
+        }        
+        
         $('#stip_prog').html(p.properties['stip_proj']);
         $('#proj_len').html(p.properties['proj_len']);
         $('#exist_lane_mi').html(p.properties['exist_lane_mi']);
@@ -217,15 +263,19 @@ $(document).ready(function() {
         $('#prc_approved').html(p.properties['prc_approved'] === -1 ? 'Yes' : 'No');
         $('#prc_year').html(p.properties['prc_year']); 
         $('#design_stat').html(p.properties['design_stat']); 
-        $('#design_stat_date').html(p.properties['design_stat_date']);  // Will this require special processing?
+        // Remove 'Z' if it appears in a date - this appears to be a 'feature' of a JSON dump of a date/time field
+        tmp = (p.properties['design_stat_date'] != null) ? p.properties['design_stat_date'] != null.replace('Z','') : '';
+        $('#design_stat_date').html(tmp);  
         $('#adds_capacity').html(p.properties['adds_capacity'] === -1 ? 'Yes' : 'No');
         $('#lrtp_project').html(p.properties['lrtp_project'] === -1 ? 'Yes' : 'No');
         $('#cur_cost_est').html(p.properties['cur_cost_est']); 
-        $('#proj_update_date').html(p.properties['proj_update_date']);  // Will this require special processing?
+        // Remove 'Z' - see comment above
+        tmp = (p.properties['proj_update_date'] != null) ? p.properties['proj_update_date'].replace('Z','') : '';
+        $('#proj_update_date').html(tmp);  
         $('#funding_stat').html(p.properties['funding_stat']);
         $('#mpo_invest_prog').html(p.properties['mpo_invest_prog']);
         $('#lrtp_identified_need').html(p.properties['lrtp_identified_need']);
-        $('#amt_programmed').html(p.properties['amt_programmed']);
+        $('#amt_programmed').html(tipCommon.moneyFormatter(p.properties['amt_programmed']));
         $('#mun_priority').html(p.properties['mun_priority'] === -1 ? 'Yes' : 'No');
         
         // Prep for retreiving project evaluation criteria
@@ -246,13 +296,15 @@ $(document).ready(function() {
         $('#crash_severity_val_scor').html(ec.properties['crash_severity_val_scor']);
         $('#hsip_cluster').html(ec.properties['crash_severity_val_scor']);
         $('#truck_crashes').html(ec.properties['truck_crashes']);
-        $('#crash_years').html(ec.properties['crash_years']);
+        // Clean up '_' in date ranges, e.g., '2014_16'
+        tmp = (ec.properties['crash_years'] != null) ? ec.properties['crash_years'].replace('_','-') : '';
+        $('#crash_years').html(tmp);
         $('#crash_rate').html(ec.properties['crash_rate']);
         $('#intersec_type').html(ec.properties['intersec_type']);
         $('#urb_fed_func_class').html(ec.properties['urb_fed_func_class']);
         $('#crash_score_corr').html(ec.properties['crash_score_corr']);
-        $('#total_adt').html(ec.properties['total_adt']);
-        $('#truck_adt').html(ec.properties['truck_ad']);
+        $('#total_adt').html(ec.properties['total_adt'].toLocaleString());
+        $('#truck_adt').html(ec.properties['truck_adt'].toLocaleString());
         $('#exist_ped_facilities').html(ec.properties['exist_ped_facilities']);
         $('#exist_ped_safety_issues').html(ec.properties['exist_ped_safety_issues']);
         $('#exist_ped_use').html(ec.properties['exist_ped_use']);

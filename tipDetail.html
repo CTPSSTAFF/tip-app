@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <head lang="en">
 <meta charset="utf-8">
-<title>Prototype TIP Project Detail Page Version 0.4</title>
+<title>Prototype TIP Project Detail Page Version 0.6</title>
 <link rel="stylesheet" href="tipDetail.css"/>
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.min.css"/>
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.structure.min.css"/>
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css"/>
+<script src="tipCommon.js"></script>
 <!-- The following line is needed for the Accessible Tabs package. -->
 <!--
 <script type="text/javascript">document.documentElement.className += " js";</script>
@@ -22,7 +23,8 @@
 <script src="libs/jquery.accessibleGrid-0.09.js"></script>
 -->
 <script src="libs/underscore-min.js"></script>
-<!-- We probably won't need the Proj4 library... -->
+<script src="libs/download.js"></script>
+<!-- We probably won't need the Proj4 library in the detail page... -->
 <!--
 <script src="libs/proj4js-2.5.0/dist/proj4.js"></script>
 -->
@@ -32,9 +34,9 @@
 <div class="ctpsHeader">
 	<div class="lightBlue"></div>
 	<div class="darkBlue"></div>
-	<a href="http://ctps.org/" target="_blank" title="Boston MPO"><img src="./img/ctps_header.png" title="Opens Boston MPO website in a new window" id ="banner" ></a>
+    <div id="banner"><a href="http://ctps.org/" target="_blank" title="Boston MPO"><img style="height:59px" src="./img/ctps_header.png" title="Opens Boston MPO website in a new window"></a></div>   
 </div>
-<h1 class="pagetitle">Prototype TIP Project Detail Page Version 0.4</h1>
+<h1 class="pagetitle">Prototype TIP Project Detail Page Version 0.6</h1>
 <div id="wrapper">
     <div id="map_wrapper">
         <h2 id="project_detail_header"></h2>
@@ -56,10 +58,6 @@
                         <tr>
                             <td>TIP ID</td>
                             <td id="tip_id" class="proj_data"></td>
-                        </tr>
-                        <tr>
-                            <td>PROJIS ID</td>
-                            <td id="projis" class="proj_data"></td>
                         </tr>                      
                         <tr>
                             <td>Project Name</td>
@@ -72,7 +70,18 @@
                         <tr>
                             <td>Category</td>
                             <td id="proj_cat" class="proj_data"></td>
-                        </tr>    
+                        </tr>   
+                        <!-- Municipality OR Municipalities -->
+                        <tr>
+                            <td id="municipality_header">Municipality</td>
+                            <td id="muni_or_munis"></td>
+                        </tr>
+                        <!-- Proponent OR Proponents -->
+                        <tr>
+                            <td id="proponent_header">Proponent</td>
+                            <td id="proponent_or_proponents"></td>
+                        </tr>
+                        
                         <tr>
                             <td>STIP Program</td>
                             <td id="stip_prog" class="proj_data"></td>

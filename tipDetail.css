@@ -59,3 +59,20 @@
 .ui-widget {
     font-size:80% !important;
 }
+/* Make each table in the detail page fill the tab that contains it */
+.tabbody table {
+    width: 100%;
+}
+/* Make the first 'column' in each table at least 500px wide
+   and its content is vertically aligned  */
+.tabbody table tr > td {
+    vertical-align: top;
+    min-width: 500px;
+}
+/* 'Stripe' rows in tables presenting project data */
+.tabbody table tr:nth-child(odd) { 
+    background: AliceBlue; 
+}
+.tabbody table tr:nth-child(odd) { 
+    background: white; 
+}
