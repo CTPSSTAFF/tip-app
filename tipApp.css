@@ -17,14 +17,12 @@
 	height:59px;
 	background-color:white
 }
-
 .lightBlue{
 	height:27px;
 	width:100%;
 	background-color:#7DA1C4;
 	z-index:10;
 }
-
 .darkBlue{
 	height:16px;
 	width:100%;
@@ -49,7 +47,8 @@
 
 #wrapper {
     width: 100%;
-    height: 600px;
+    /* height: 600px; */
+    height: 700px;
 }
 #legend {
 /*
@@ -84,7 +83,8 @@
     margin-bottom: 5px;
 }
 #map {
-    height: 100%;
+    /* height: 100%; */
+    height: 600px;
     border: 4px solid #B87F32; 
 }
 #legend h2 {
@@ -125,10 +125,16 @@
 
 #tabs_div {
     width:  100%;
-    height: 1000px;
+    height: fit-content;
 }
+.tabbody {
+    height: fit-content;
+}
+
 
 /* Throttle the jQueryUI font size back a bit */
 .ui-widget {
-    font-size:80% !important;
+    font-size:90% !important;
 }
+
+

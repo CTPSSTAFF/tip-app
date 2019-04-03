@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head lang="en">
 <meta charset="utf-8">
-<title>Prototype TIP Application Version 0.9a</title>
+<title>Prototype TIP Application Version 0.9b</title>
 
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.min.css"/>
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.structure.min.css"/>
@@ -38,90 +38,101 @@
 	<div class="darkBlue"></div>
 	<div id="banner"><a href="http://ctps.org/" target="_blank" title="Boston MPO"><img style="height:59px" src="./img/ctps_header.png" title="Opens Boston MPO website in a new window"></a></div>
 </div>
-<h1 class="pagetitle">Prototype TIP Application Version 0.9a</h1>
+<h1 class="pagetitle">Prototype TIP Application Version 0.9b</h1>
 <div id="wrapper">
-    <div id="map_wrapper">
-        <div id="search_div" role="search">
-            <div style="display:inline-block">
-                <strong>Search for projects:&nbsp;&nbsp;</strong>
-            </div>
-            <div id="search_div_part_1" class="search_div_part">
-                <label for="select_town">Municipality:</label>
-                <!--- <option>s for the following <select> populated in init code. --->
-                <select id="select_town">
-                </select>
-                <label for="select_subregion">MAPC Subregion:</label>
-                <select id="select_subregion"> 
-                    <option value="0">All</option>       
-                    <option value="icc">ICC</option>
-                    <option value="magic">MAGIC</option>
-                    <option value="metrowest">Metrowest</option>
-                    <option value="nspc">NSPC</option>
-                    <option value="nstf">NSTF</option>
-                    <option value="ssc">SSC</option>
-                    <option value="swap">SWAP</option>
-                    <option value="tric">TRIC</option>                
-                </select>  
-                <!--- <option>s for the following <select> populated in init code. --->
-                <label for="select_proj_category">Project category:</label>
-                <select id="select_proj_category">
-                </select>
-                <!-- Not yet sure how the <option>s for this <select> will be populated. -->
-                <label for="select_proj_status">Project status:</label>
-                <select id="select_proj_status">
-                    <option value="all">All</option>
-                </select>            
-                <!--- <option>s for the following <select> populated in init code. --->
-                <label for="select_first_yr_prog">First year programmed</label>
-                <select id="select_first_yr_prog">
-                </select>
-                <!--- If restored, the <option>s for the following <select> will be populated in init code. --->
-                <!--
-                <label for="select_tip_id">TIP ID:</label>
-                <select id="select_tip_id">
-                </select>
-                -->      
-            </div> <!-- search_div_part_1 -->
-            <div id="search_div_part_2" class="search_div_part">
-                <label for="lrtp_project">LRTP project?</label>
-                <input type="checkbox" id="lrtp_project" name="lrtp_project" value="lrtp_project">  
-                <label for="mpo_funded">Regional Target Funded project?</label>
-                <input type="checkbox" id="mpo_funded" name="mpo_funded" value="mpo_funded">
-                <label for="mpo_funded">CTPS study?</label>
-                <input type="checkbox" id="ctps_study" name="ctps_study" value="ctps_study">
-            </div> <!-- search_div_part_2 -->
-            <div id="search_div_part_3" class="search_div_part">
-                <input type="button" id="search_button" value="Search" />
-                <a id="skip_forward_link" href="#skip_backward_link" class="element-invisible">Skip over Google Map to search results.</a>
-            </div> <!-- search_div_part_3 -->
-        </div> <!-- search_div -->  
-        <div id="map" role="presentation">
-        </div>
-        <div id="legend" role="presentation">
-            <span>
-                <strong>Legend</strong>
-                <img src="img/orange-dot.png">Major highway project&nbsp;&nbsp;
-                <img src="img/pink-dot.png">Arterial / Intersection project&nbsp;&nbsp;
-                <img src="img/blue-dot.png">Bridge project&nbsp;&nbsp;
-                <img src="img/red-dot.png">Bicycle / Pedestrian project&nbsp;&nbsp;
-                <img src="img/green-dot.png">Transit project&nbsp;&nbsp;
-            </span>
-            <br/>
-            <span>
-                <svg id="legend_svg_1" class="legend_svg"><line id="svg_line_in_legend_1" x1="0" y1="50" x2="100" y2="50" stroke="#00a674" stroke-width="8"></line></svg>&nbsp;&nbsp;Boston Region MPO Boundary&nbsp;&nbsp;
-                <svg id="legend_svg_2" class="legend_svg"><line id="svg_line_in_legend_2" x1="0" y1="50" x2="100" y2="50" stroke="brown" stroke-width="1.5"></line></svg>&nbsp;&nbsp;MAPC Subregion Boundary&nbsp;&nbsp;
-            </span>
-        </div>  
-        <a id="skip_backward_link" href="#skip_forward_link" class="element-invisible">Skip back over Google Map</a>
-        <h2 class="project_list_caption">Search Results</h2>  
-        <input type="button" id="download_button" value="Download search results" />
-        <div id="project_list_div">
-            <div id="project_list_contents_accessible"  class="element-invisible">
-            </div> <!-- project_list_contents_accessible -->
-            <div id="project_list_contents" role="presentation" aria-hidden="true">
-            </div>  <!-- project_list_contents -->
-        </div> <!-- project_list_div -->
-    </div> <!-- map_wrapper -->
+    <div class="tabs" id="tabs_div">
+        <ul>
+            <li><a href="#background_tab">Background</a></li>
+            <li><a href="#search_tab">Search for Projects</a></li>
+        </ul>
+        <div class="tabbody" id="background_tab">
+            <p>This is the contents of the background tab.</p>
+        </div> <!-- background_tab -->
+        <div class=tabbody id="search_tab">
+            <div id="map_wrapper">
+                <div id="search_div" role="search">
+                    <div style="display:inline-block">
+                        <strong>Search for projects:&nbsp;&nbsp;</strong>
+                    </div>
+                    <div id="search_div_part_1" class="search_div_part">
+                        <label for="select_town">Municipality:</label>
+                        <!--- <option>s for the following <select> populated in init code. --->
+                        <select id="select_town">
+                        </select>
+                        <label for="select_subregion">MAPC Subregion:</label>
+                        <select id="select_subregion"> 
+                            <option value="0">All</option>       
+                            <option value="icc">ICC</option>
+                            <option value="magic">MAGIC</option>
+                            <option value="metrowest">Metrowest</option>
+                            <option value="nspc">NSPC</option>
+                            <option value="nstf">NSTF</option>
+                            <option value="ssc">SSC</option>
+                            <option value="swap">SWAP</option>
+                            <option value="tric">TRIC</option>                
+                        </select>  
+                        <!--- <option>s for the following <select> populated in init code. --->
+                        <label for="select_proj_category">Project category:</label>
+                        <select id="select_proj_category">
+                        </select>
+                        <!-- Not yet sure how the <option>s for this <select> will be populated. -->
+                        <label for="select_proj_status">Project status:</label>
+                        <select id="select_proj_status">
+                            <option value="all">All</option>
+                        </select>            
+                        <!--- <option>s for the following <select> populated in init code. --->
+                        <label for="select_first_yr_prog">First year programmed</label>
+                        <select id="select_first_yr_prog">
+                        </select>
+                        <!--- If restored, the <option>s for the following <select> will be populated in init code. --->
+                        <!--
+                        <label for="select_tip_id">TIP ID:</label>
+                        <select id="select_tip_id">
+                        </select>
+                        -->      
+                    </div> <!-- search_div_part_1 -->
+                    <div id="search_div_part_2" class="search_div_part">
+                        <label for="lrtp_project">LRTP project?</label>
+                        <input type="checkbox" id="lrtp_project" name="lrtp_project" value="lrtp_project">  
+                        <label for="mpo_funded">Regional Target Funded project?</label>
+                        <input type="checkbox" id="mpo_funded" name="mpo_funded" value="mpo_funded">
+                        <label for="mpo_funded">CTPS study?</label>
+                        <input type="checkbox" id="ctps_study" name="ctps_study" value="ctps_study">
+                    </div> <!-- search_div_part_2 -->
+                    <div id="search_div_part_3" class="search_div_part">
+                        <input type="button" id="search_button" value="Search" />
+                        <a id="skip_forward_link" href="#skip_backward_link" class="element-invisible">Skip over Google Map to search results.</a>
+                    </div> <!-- search_div_part_3 -->
+                </div> <!-- search_div -->  
+                <div id="map" role="presentation">
+                </div>
+                <div id="legend" role="presentation">
+                    <span>
+                        <strong>Legend</strong>
+                        <img src="img/orange-dot.png">Major highway project&nbsp;&nbsp;
+                        <img src="img/pink-dot.png">Arterial / Intersection project&nbsp;&nbsp;
+                        <img src="img/blue-dot.png">Bridge project&nbsp;&nbsp;
+                        <img src="img/red-dot.png">Bicycle / Pedestrian project&nbsp;&nbsp;
+                        <img src="img/green-dot.png">Transit project&nbsp;&nbsp;
+                    </span>
+                    <br/>
+                    <span>
+                        <svg id="legend_svg_1" class="legend_svg"><line id="svg_line_in_legend_1" x1="0" y1="50" x2="100" y2="50" stroke="#00a674" stroke-width="8"></line></svg>&nbsp;&nbsp;Boston Region MPO Boundary&nbsp;&nbsp;
+                        <svg id="legend_svg_2" class="legend_svg"><line id="svg_line_in_legend_2" x1="0" y1="50" x2="100" y2="50" stroke="brown" stroke-width="1.5"></line></svg>&nbsp;&nbsp;MAPC Subregion Boundary&nbsp;&nbsp;
+                    </span>
+                </div>  
+                <a id="skip_backward_link" href="#skip_forward_link" class="element-invisible">Skip back over Google Map</a>
+                <h2 class="project_list_caption">Search Results</h2>  
+                <input type="button" id="download_button" value="Download search results" />
+                <div id="project_list_div">
+                    <div id="project_list_contents_accessible"  class="element-invisible">
+                    </div> <!-- project_list_contents_accessible -->
+                    <div id="project_list_contents" role="presentation" aria-hidden="true">
+                    </div>  <!-- project_list_contents -->
+                </div> <!-- project_list_div -->
+            </div> <!-- map_wrapper -->
+        </div> <!-- search_tab -->
+    </div> <!-- tabs_div -->
 </div> <!-- wrapper --> 
 <script src="tipApp.js"></script>
 </body>

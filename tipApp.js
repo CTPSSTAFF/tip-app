@@ -1,6 +1,6 @@
 // TIP web application - project search page
 // Author:  B. Krepp
-// Date:    Dec 2018 - Jan/Feb 2019
+// Date:    Dec 2018 - Jan/Feb/Mar 2019
 //
 // Stuff pertaining to retrieval of data from TIP database, and the data itself:
 //
@@ -68,8 +68,10 @@ var accGridOptions = { div_id    : 'project_list_contents_accessible',
                        caption   : 'Table of TIP Projects',
                        colDesc   : accColDesc,
                        col1th    : true,
-                       summary   : 'Selected TIP Projects' };
-                       
+                       summary   : 'Selected TIP Projects' 
+};
+
+// Stuff to support colored overlays for MAPC subregions                     
 var subregionFillColors = {
     'ICC'       :  '#439c46',
     'ICC/TRIC'  :  '#83466f',  
@@ -83,7 +85,7 @@ var subregionFillColors = {
     'TRIC/SWAP' :  '#f36d21'   // Currently duplicates 'NSTF'
 };
                        
-// Stuff for labeling (centroids of) MAPC subregions
+// Stuff to support labeling (centroids of) MAPC subregions
 var subregionCentroids = {
     'ICC'       :  { name:  'ICC',      lng: -71.09714487, lat:	42.36485871 },
     'ICC/TRIC-1':  { name:  'ICC/TRIC', lng: -71.0843212,  lat: 42.24126261 },  // Milton
@@ -97,32 +99,26 @@ var subregionCentroids = {
     'TRIC'      :  { name:  'TRIC',     lng: -71.20413265, lat:	42.16445925 },
     'TRIC/SWAP' :  { name:  'TRIC/SWAP',lng: -71.28420378, lat:	42.2366124  }
 }; 
+// Array of labels rendered using V3 Utility Library
+var mapLabels = [];
+
+// Hack to enable Google Map to be rendered when relevant tab is exposed for the first time only. Yeech.
+var searchTabExposed = false;
 
 $(document).ready(function() {
-    // Initialize the Google Map
-    //
-    var regionCenterLat = 42.345111165; 
-    var regionCenterLng = -71.124736685;
-    var initialZoomLev = 10;
-    var mapOptions = {
-        center: new google.maps.LatLng(regionCenterLat, regionCenterLng),
-        zoom: initialZoomLev,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        mapTypeControlOptions: {'style': google.maps.MapTypeControlStyle.DROPDOWN_MENU},
-        panControl: false,
-        streetViewControl: false,
-        zoomControlOptions: {'style': 'SMALL'},
-        scaleControl: true,
-        overviewMapControl: false
-    };   
-    map = new google.maps.Map(document.getElementById("map"), mapOptions);
-    google.maps.event.addListener(map, "bounds_changed", function boundsChangedHandler(e) { } );
-    // Un petit hacque to get the map's "bounds_changed" event to fire.
-    // Believe it or not: When a Google Maps map object is created, its bounding
-    // box is undefined (!!). Thus calling map.getBounds() on a newly created map
-    // will raise an error. We are compelled to force a "bounds_changed" event to fire.
-    // Larry and Sergey: How did you let this one get through the cracks, guys? C'mon!
-    map.setCenter(new google.maps.LatLng(regionCenterLat + 0.000000001, regionCenterLng  + 0.000000001));    
+    // Enable jQueryUI tabs
+    // Note that the Google Map is only initialized and rendered
+    $('#tabs_div').tabs({
+        activate: function(event, ui) {
+            var _DEBUG_HOOK = 0;
+            if (ui.newTab.index() == 1 && searchTabExposed == false) {
+                initializeMap();
+                searchTabExposed = true;
+                // Per customer request: Query for *all* projects on app startup
+                $('#search_button').trigger('click');
+            }
+        }
+    });
     
     // Initialize the machinery for the Slick Grid
     //
@@ -174,47 +170,16 @@ $(document).ready(function() {
                     mapc_subregions) {
         var ok = _.every(arguments, function(arg) { return arg[1] === "success"; });
         if (ok === false) {
-            alert("One or more WFS requests failed. Exiting application.");
+            alert("One or more requests to load data failed. Exiting application.");
             return;         
         }
+            
+        // MAPC subregion polygons and MPO boundary line - cache these in the DATA object;
+        // they are rendered when the tab containing the Google Map is exposed for the first time
+        DATA.mapc_subregions_obj = JSON.parse(mapc_subregions[0]);
+        // MPO boundary linework
+        DATA.mpo_boundary_obj = JSON.parse(mpo_boundary[0]);
         
-        var i, style; 
-/*
-        // Draw MAPC subregion *boundaries* on Google Map - note: this FC consists of MULTIPLE features
-        mapc_subregion_boundaries_obj = JSON.parse(mapc_subregion_boundaries[0]);
-        for (i = 0; i < mapc_subregion_boundaries_obj.features.length; i++) {
-            lineFeature = mapc_subregion_boundaries_obj.features[i];
-            drawPolylineFeature(lineFeature, map, { strokeColor : subregionBoundaryColor, strokeOpacity : 1.0, strokeWeight: 1.5 });
-        }
-*/       
-        // Draw MAPC subregion polygons on map
-        var mapc_subregions_obj = JSON.parse(mapc_subregions[0]);
-        style = { strokeColor : subregionBoundaryColor, strokeOpacity : 1.0, strokeWeight: 1.5, fillOpacity : 0.15 };
-        for (i = 0; i < mapc_subregions_obj.features.length; i++) {
-            name = mapc_subregions_obj.features[i].properties['name'];
-            style.fillColor = subregionFillColors[name];
-            drawPolygonFeature(mapc_subregions_obj.features[i], map, style);
-        } 
-        
-        // Draw MPO boundary on Google Map - this FC consists of a single feature
-        mpo_boundary_obj = JSON.parse(mpo_boundary[0]);
-        drawPolylineFeature(mpo_boundary_obj.features[0], map, { strokeColor : mpoBoundaryColor, strokeOpacity : 0.7, strokeWeight: 8 });
-        
-        // Label the centroids of the MAPC subregions using the MapLabel class from the Google Maps v3 Utility Library
-        var mapLabel, latlng;
-        for (var subregion in subregionCentroids) {
-            latlng = new google.maps.LatLng(subregionCentroids[subregion].lat, subregionCentroids[subregion].lng);
-            mapLabel = new MapLabel( { text:       subregionCentroids[subregion].name,
-                                       position:   latlng,
-                                       map:        map,
-                                       fontSize:   16,
-                                       fontStyle:  'italic',
-                                       fontColor:  '#ff0000',
-                                       align:      'center'
-                       });
-            mapLabel.set('position', latlng);
-        }
-
         // Sort the array of TIP projects in ascending order on TIP_ID.
         // Note that TIP_ID if of type 'string'  and it sometimes includes non-numeric characters. Ugh!
         // Perform the sort as prep for populating <select> box of projects by TIP_ID, below.
@@ -283,7 +248,6 @@ $(document).ready(function() {
             oSelect.options.add(oOption);
         });
          
-        
         // Populate the <select> box for project category
         // Read the LUT of project categories in order to do so
         var aCategories = proj_cat[0].features;;
@@ -326,14 +290,124 @@ $(document).ready(function() {
   
         // Arm on-click event handler for the 'Search' button
         $('#search_button').click(queryProjects);  
+        
         // And, per customer request query for all projects on app startup
-        $('#search_button').trigger('click');
+        // Per swtich to 'tabbed' presentation, with "search" tab (containing Google Map) *not* exposed 
+        //  when $(document).ready event fires - the following call has been moved into "initializeMap"
+        // $('#search_button').trigger('click');
     }); // handler for 'when loading of data is done' event
 });	// $(document).ready event handler
 
 
+// Initialize the Google Map when the tab containing it is exposed for the first time
+function initializeMap() {
+    var regionCenterLat = 42.345111165; 
+    var regionCenterLng = -71.124736685;
+    var initialZoomLev = 9;
+    var mapOptions = {
+        center: new google.maps.LatLng(regionCenterLat, regionCenterLng),
+        zoom: initialZoomLev,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        mapTypeControlOptions: {'style': google.maps.MapTypeControlStyle.DROPDOWN_MENU},
+        panControl: false,
+        streetViewControl: false,
+        zoomControlOptions: {'style': 'SMALL'},
+        scaleControl: true,
+        overviewMapControl: false
+    };   
+    map = new google.maps.Map(document.getElementById("map"), mapOptions);
+ 
+    // START of petite hacque to set scale bar units to miles/imperial instead of km/metric:
+    // See: https://stackoverflow.com/questions/18067797/how-do-i-change-the-scale-displayed-in-google-maps-api-v3-to-imperial-miles-un
+    // and: https://issuetracker.google.com/issues/35825255
+    var intervalTimer = window.setInterval(function() {
+        var elements = document.getElementById("map").getElementsByClassName("gm-style-cc");
+        for (var i in elements) {
+            // look for 'km' or 'm' in innerText via regex https://regexr.com/3hiqa
+            if ((/\d\s?(km|(m\b))/g).test(elements[i].innerText)) {
+                // The following call effects the change of scale bar units
+                elements[i].click();
+                window.clearInterval(intervalTimer);
+            }
+        }
+    }, 500);
+    window.setTimeout(function() { window.clearInterval(intervalTimer) }, 20000 );
+    // END of peitie hacque to set scale bar units to miles/imperial instead of km/metric    
+    
+    var i, style;       
+    // Draw MAPC subregion polygons on map - this FC consists of multiple features,
+    // some of which are Polygons and others of which are MultiPolygons (i.e., multi-part polygons)
+    style = { strokeColor : subregionBoundaryColor, strokeOpacity : 1.0, strokeWeight: 1.5, fillOpacity : 0.15 };
+    for (i = 0; i < DATA.mapc_subregions_obj.features.length; i++) {
+        name = DATA.mapc_subregions_obj.features[i].properties['name'];
+        style.fillColor = subregionFillColors[name];
+        drawPolygonFeature(DATA.mapc_subregions_obj.features[i], map, style);
+    } 
+    
+    // Draw MPO boundary on Google Map - this FC consists of a single feature;
+    drawPolylineFeature(DATA.mpo_boundary_obj.features[0], map, { strokeColor : mpoBoundaryColor, strokeOpacity : 0.7, strokeWeight: 8 });
+    
+    // Label the centroids of the MAPC subregions using the MapLabel class from the Google Maps v3 Utility Library
+    var mapLabel, latlng;
+    for (var subregion in subregionCentroids) {
+        latlng = new google.maps.LatLng(subregionCentroids[subregion].lat, subregionCentroids[subregion].lng);
+        mapLabel = new MapLabel( { text:       subregionCentroids[subregion].name,
+                                   position:   latlng,
+                                   map:        map,
+                                   fontSize:   10,
+                                   fontStyle:  'italic',
+                                   fontColor:  '#ff0000',
+                                   align:      'center'
+                   });
+        mapLabel.set('position', latlng);
+        mapLabels.push(mapLabel);
+    }
+    // Fiddle with the font size of the labels, so they appear to "zoom"
+    // Between zoom levels 10 and 16, it looks like the zoom level itself can be used pretty well as the font size!
+    google.maps.event.addListener(map, "zoom_changed", 
+        function zoomChangedHandler(e) { 
+            var i, zoomLev = map.getZoom();
+            console.log('Zoom level is: ' + zoomLev);
+            for (i = 0; i < mapLabels.length; i++) {
+                if (zoomLev <= 10) { 
+                    mapLabels[i].setOptions({'fontSize' : 10});
+                } else if (zoomLev > 10 && zoomLev <= 16) {
+                    // Just in case (undocumented setOptions API requires literals for option values
+                    // Not sure if this is the case or not ...
+                    switch(zoomLev) {
+                    case 11:
+                        mapLabels[i].setOptions({'fontSize' : 11});
+                        break;
+                    case 12:
+                        mapLabels[i].setOptions({'fontSize' : 12});
+                        break;
+                    case 13:
+                        mapLabels[i].setOptions({'fontSize' : 13});
+                        break;
+                    case 14:
+                        mapLabels[i].setOptions({'fontSize' : 14});
+                        break;
+                    case 15:
+                        mapLabels[i].setOptions({'fontSize' : 15});
+                        break;
+                    case 16:
+                        mapLabels[i].setOptions({'fontSize' : 16});
+                        break;
+                    default:
+                        // Shouldn't get here - arbitrary choice of font size
+                        mapLabels[i].setOptions({'fontSize' : 16});
+                        break;
+                    }
+                } else {
+                    mapLabels[i].setOptions({'fontSize' : 16});
+                }
+            }
+        } );    
+} // initializeMap()
+
+
 function queryProjects(e) {
-    // N.B. In functional programming, a 'predicate' is a boolean-valued function
+    // N.B. For those unframiliar with functional programming, a 'predicate' is a boolean-valued function
     var predicate; 
     
     // Figure out which search crieteria have been specified
@@ -483,8 +557,7 @@ function displayProjects(aProjects) {
                 // Defensive programming: This shouldn't happen, but just in case it does...
                 var tmpStr = 'Cannot create marker for project tip_id = '  + tip_id + ', ' + ctps_id + ' ' + ctps_id + '.\n';
                 tmpStr += '"is_geo" attribute is -1, but no record found in tip_spatial table.';
-                // alert(tmpStr);
-                console.log(tmpStr);
+                // console.log(tmpStr);
             } else {
                 pos = { lat : tip_spatial_rec.properties['latitude'], lng : tip_spatial_rec.properties['longitude'] };
                 marker = new google.maps.Marker({ position: pos,
@@ -513,7 +586,7 @@ function displayProjects(aProjects) {
                 googleBounds.extend({ lat : tip_spatial_rec.properties['latitude'], lng : tip_spatial_rec.properties['longitude'] });          
             } // inner if: tip_spatial_rec is/isn't undefined
         } else {
-            console.log('Project with TIP ID = ' + tip_id + ' has no record in tip_spatial table.');
+            // console.log('Project with TIP ID = ' + tip_id + ' has no record in tip_spatial table.');
         } // outer if: projct 'has_geo' 
     } // for over aProjects array
     
@@ -548,14 +621,14 @@ function displayProjects(aProjects) {
         // Create string of data to be downloaded
         var newstring = '';
          // First: header line
-         newstring = 'TIP ID,Project Name,Category,Municipality,Current Cost Estimate,First Year Programmed';
+         newstring = 'TIP ID,Project Name,Category,Town(s),Current Cost Estimate,First Year Programmed';
          newstring += '\n';
         // Then: data lines
         for (i = 0; i < aData.length; i++) {
            newstring += aData[i].tip_id + ',';
            newstring += '"' + aData[i].proj_name + '"' + ','; // N.B. This field may contain commas!
            newstring += aData[i].proj_cat + ',';
-           newstring += aData[i].town + ',';
+           newstring += '"' + aData[i].towns + '"' + ',';                  // N.B. This field may contain commas!
            newstring += aData[i].cur_cost_est + ',';
            newstring += aData[i].first_year_prog;
            newstring += '\n';           
@@ -649,4 +722,4 @@ function drawPolygonFeature(polygonFeature, gMap, style) {
         });
         polygon.setMap(gMap);
     } // end-if over geometry.type    
-} // drawPolygonFeature()
+} // drawPolygonFeature())

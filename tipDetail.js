@@ -1,6 +1,6 @@
 // TIP web application - project detail page
 // Author:  B. Krepp
-// Date:    Dec 2018 - Jan 2019
+// Date:    Dec 2018 - Jan/Feb/Mar 2019
 $(document).ready(function() {
     // Stuff pertaining to retrieval of data from TIP database, and the data itself:
     //
@@ -20,10 +20,9 @@ $(document).ready(function() {
     var city_town_lutURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_city_town_lookup&outputformat=json';
     var contactsURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_contacts&outputformat=json';   
     // var proj_catURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_lut_proj_cat&outputformat=json';
-        // Maps the ctps_id of a project to a string containing the names(s) of the towns in which the project is located
+        // The following maps the ctps_id of a project to a string containing the names(s) of the towns in which the project is located
     var project_town_listURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_project_town_list_view&outputformat=json';
-    
-        // Maps the ctps_id of a project to a string contining the name(s) of the project's proponents
+        // The following maps the ctps_id of a project to a string contining the name(s) of the project's proponents
     var project_proponent_listURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_project_proponent_list_view&outputformat=json';
     
      // Global "database" of JSON returned from WFS requests
@@ -52,13 +51,23 @@ $(document).ready(function() {
         overviewMapControl: false
     };   
     map = new google.maps.Map(document.getElementById("map"), mapOptions);    
-    google.maps.event.addListener(map, "bounds_changed", function boundsChangedHandler(e) { } );
-    // Un petit hacque to get the map's "bounds_changed" event to fire.
-    // Believe it or not: When a Google Maps map object is created, its bounding
-    // box is undefined (!!). Thus calling map.getBounds() on a newly created map
-    // will raise an error. We are compelled to force a "bounds_changed" event to fire.
-    // Larry and Sergey: How did you let this one get through the cracks, guys? C'mon!
-    map.setCenter(new google.maps.LatLng(regionCenterLat + 0.000000001, regionCenterLng  + 0.000000001));      
+
+    // START of petite hacque to set scale bar units to miles/imperial instead of km/metric:
+    // See: https://stackoverflow.com/questions/18067797/how-do-i-change-the-scale-displayed-in-google-maps-api-v3-to-imperial-miles-un
+    // and: https://issuetracker.google.com/issues/35825255
+    var intervalTimer = window.setInterval(function() {
+        var elements = document.getElementById("map").getElementsByClassName("gm-style-cc");
+        for (var i in elements) {
+            // look for 'km' or 'm' in innerText via regex https://regexr.com/3hiqa
+            if ((/\d\s?(km|(m\b))/g).test(elements[i].innerText)) {
+                // The following call effects the change of scale bar units
+                elements[i].click();
+                window.clearInterval(intervalTimer);
+            }
+        }
+    }, 500);
+    window.setTimeout(function() { window.clearInterval(intervalTimer) }, 20000 );
+    // END of peitie hacque to set scale bar units to miles/imperial instead of km/metric   
  
     // Utility function to return the value of the parameter named 'sParam' from the window's URL
     function getURLParameter(sParam) {
@@ -623,7 +632,7 @@ $(document).ready(function() {
                            '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[nonfed_ix].properties['fy2022']) + '</td>' + 
                            '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[nonfed_ix].properties['fy2023']) + '</td>' + 
                        '</tr>';
-            totalLine = '<tr><td>Totall Funds</td>' +
+            totalLine = '<tr><td>Total Funds</td>' +
                            '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[total_ix].properties['fy2019']) + '</td>' + 
                            '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[total_ix].properties['fy2020']) + '</td>' + 
                            '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[total_ix].properties['fy2021']) + '</td>' + 
