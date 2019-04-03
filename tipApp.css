@@ -75,7 +75,9 @@
 }
 #search_div {
     /* margin-bottom: 10px; */
-    height: 45px;
+    /* height: 70px; */
+    height: max-content;
+    margin-bottom: 5px;
 }
 #map {
     height: 100%;
@@ -106,6 +108,9 @@
 #project_list_contents {
     min-height: 200px;
     min-width:  500px;
+}
+.tip_id_column_header {
+    text-align: left;
 }
 .moneyColumn {
     text-align: right;

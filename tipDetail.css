@@ -63,12 +63,22 @@
 .tabbody table {
     width: 100%;
 }
-/* Make the first 'column' in each table at least 500px wide
-   and its content is vertically aligned  */
+/* Make the first 'column' in each table at least 500px wide and its content is vertically aligned ...  */
 .tabbody table tr > td {
     vertical-align: top;
     min-width: 500px;
 }
+/* ... Except for the bridges table... */
+#bridges_table tr > td {
+    vertical-align: top;
+    min-width: 150px;
+}
+/* ... And the proponents table. */
+#proponents_table tr > td {
+    vertical-align: top;
+    min-width: 150px;
+}
+
 /* 'Stripe' rows in tables presenting project data */
 .tabbody table tr:nth-child(odd) { 
     background: AliceBlue; 

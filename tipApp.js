@@ -33,20 +33,22 @@ var mpoBoundaryColor = '#00a674'; // "Medium Spring Green"
 //
 // Slick Grid 'grid' object and grid options
 var grid = null;
-var gridOptions = { enableColumnReorder : false, autoHeight: true };
+var gridOptions = { enableColumnReorder : false, autoHeight: true, forceFitColumns: true };
 // Stuff for grid columns
 // N.B. The width values reflect the jQueryUI font size being throttled-back to 80% of its default size in tipApp.css
-var gridColumns = [ { id : 'tip_id_col',    name : 'TIP ID',       field : 'tip_id', width : 80, sortable: true, toolTip: 'Click column header to sort this column.',
+var gridColumns = [ { id : 'tip_id_col',    name : 'TIP ID',       field : 'tip_id', width : 60, sortable: true, toolTip: 'Click column header to sort this column.',
+                      headerCssClass : 'tip_id_column_header',
                       formatter : function(row, cell, value, columnDef, dataContext) {
                                       return '<a href=tipDetail.html?tip_id=' + value + ' target="_blank">' + value + '</a>';
                                   } 
                     },
-                    { id : 'proj_name_col',       name : 'Project Name',              field : 'proj_name',       width : 800, sortable : false }, 
+                    { id : 'proj_name_col',       name : 'Project Name',              field : 'proj_name',       width : 740, sortable : false }, 
                     { id : 'proj_cat_col',        name : 'Category',                  field : 'proj_cat',        width : 150, sortable : true, toolTip: 'Click column header to sort this column.' },
-                    { id : 'town_col',            name : 'Municipality',              field : 'town',            width : 150, sortable : true, toolTip: 'Click column header to sort this column.' },
-                    { id : 'cur_cost_est_col',    name : 'Current Cost Estimate',     field : 'cur_cost_est',    width : 150, sortable : true, toolTip: 'Click column header to sort this column.',
+                    { id : 'town_col',            name : 'Municipality',              field : 'towns',           width : 150, sortable : true, toolTip: 'Click column header to sort this column.' },
+                    { id : 'subregion_col',       name : 'Subregion',                 field : 'subregions',      width : 150, sortable : true, toolTip: 'Click column header to sort this column.' },
+                    { id : 'cur_cost_est_col',    name : 'Current Cost Estimate',     field : 'cur_cost_est',    width : 160, sortable : true, toolTip: 'Click column header to sort this column.',
                       cssClass : 'moneyColumn',   formatter : tipCommon.moneyFormatter },                         
-                    { id : 'first_year_prog',     name : 'First Year Programmed',     field : 'first_year_prog', width:  150,  sortable : true, toolTip: 'Click column header to sort this column.',
+                    { id : 'first_year_prog',     name : 'First Year Programmed',     field : 'first_year_prog', width:  160,  sortable : true, toolTip: 'Click column header to sort this column.',
                       cssClass : 'dateColumn' }
                  ];
 // Slick Grid 'dataView' object
@@ -56,7 +58,8 @@ var dataView = null;
 var accColDesc = [  { header : 'TIP ID',                  dataIndex : 'tip_id',   },
                     { header : 'Project Name',            dataIndex : 'proj_name' },
                     { header : 'Category',                dataIndex : 'proj_cat' },
-                    { header : 'Municipality',            dataIndex : 'town' },
+                    { header : 'Municipality',            dataIndex : 'towns' },
+                    { header : 'Subregion',               dataIndex : 'subregions' },  
                     { header : 'Current Cost Estimate',   dataIndex : 'cur_cost_est',   cls : 'moneyColumn', renderer : tipCommon.moneyFormatter },
                     { header : 'First Year Programmed',   dataIndex : 'first_year_prog' } ];
 var accGridOptions = { div_id    : 'project_list_contents_accessible',
@@ -192,7 +195,8 @@ $(document).ready(function() {
             } // for j
         } // for i     
         
-        // Populate the <select> box for TIP_ID        
+        // Populate the <select> box for TIP_ID   
+/*        
         var oSelect, oOption;
         oSelect = document.getElementById("select_tip_id");
         oOption = document.createElement("OPTION");
@@ -205,6 +209,7 @@ $(document).ready(function() {
             oOption.text = DATA.projects[i].properties['tip_id'];
             oSelect.options.add(oOption);            
         }
+*/
         
         // Populate the <select> box for project category
         // Read the LUT of project categories in order to do so
@@ -258,45 +263,74 @@ function queryProjects(e) {
     
     // Figure out which search crieteria have been specified
     // If more than one search criterion was selected, search on the logical AND of these
-    var town_id = +($('#select_town option:selected').val());   // Convert string to number
+    var town_id = +($('#select_town option:selected').val());      // Convert string containing text of number to number
+    var town = $('#select_town option:selected').html();           // Get text of town name
+    var subregion = $('#select_subregion option:selected').html(); // Get text of subregion name
     var category = $('#select_proj_category option:selected').val();
+    var proj_status = $('#select_proj_status option:selected').val();
     var first_year = +$('#select_first_yr_prog option:selected').val();
-    var tip_id = $('#select_tip_id option:selected').val();
     var ltrp_projects = $('#lrtp_project').prop('checked');
-    var results = DATA.projects_JOIN;    
+    var mpo_funded = $('#mpo_funded').prop('checked');
+    var ctps_study = $('#ctps_study').prop('checked');
+     // var tip_id = $('#select_tip_id option:selected').val();   
+    
+    // var results = DATA.projects_JOIN;  
+    var results = DATA.projects;
     
     // 1. Did the search specify a town?
-    if (town_id !== 0) {
-        // Find all the records in the projects_JOIN table with the specified town_id
-        predicate = function(proj_join_rec) { return proj_join_rec.properties['town_id'] === town_id; };
-        var results = _.filter(results, predicate);
-    }
-    // 2. Did the search specity a project type?
+    if (town !== 'All') {
+        // Find all the records in the projects table whose 'towns' field CONTAINS the specified town
+       predicate = function(proj_rec) { return proj_rec.properties['towns'].contains(town) === true; };
+       results = _.filter(results, predicate);
+    }    
+    // 2. Did the search specify a subregion?
+    if (subregion != 'All') {
+        // Find all the records in the projects table whose 'subregions' field CONTAINS the specified subregion
+       predicate = function(proj_rec) { 
+                        // It would appear that for some records, the 'subregions' property can be missing ... :-(
+                        return (proj_rec.properties['subregions'] != null) && (proj_rec.properties['subregions'].contains(subregion) === true); };
+       results = _.filter(results, predicate);        
+    }   
+    // 3. Did the search specity a project type?
     if (category !== '0') {
-        predicate = function(proj_join_rec) { return proj_join_rec.properties['proj_cat'] === category; };
+        predicate = function(proj_rec) { return proj_rec.properties['proj_cat'] === category; };
         results = _.filter(results, predicate);
-        // Sort results in order of ascending town_id
-        results.sort(function(a,b) { return a.properties['town_id'] - b.properties['town_id']; });
-    } 
-    // 3. Did the search specify a 'first year programmed'?
+    }    
+    // 4. Did the search specify a project status?
+    if (proj_status != 'All') {
+        // *** TBD
+    }
+    // 5. Did the search specify a 'first year programmed'?
     if (first_year !== 0) {
-        predicate = function(proj_join_rec) { return proj_join_rec.properties['first_year_prog'] === first_year; };
+        predicate = function(proj_rec) { return proj_rec.properties['first_year_prog'] === first_year; };
         results = _.filter(results, predicate);
-        results.sort(function(a,b) { return a.properties['town_id'] - b.properties['town_id']; });
-    }
-    // 4. Was the search for LRTP projects (only)?
+    }  
+    // 6. Was the search for LRTP projects?
     if (lrtp_project == true) {
-        predicate = function(proj_join_rec) { return proj_join_rec.properties['lrtp_project'] === true; };
-        results = _.filter(results, predicate);
-        results.sort(function(a,b) { return a.properties['town_id'] - b.properties['town_id']; });               
+        predicate = function(proj_rec) { return proj_rec.properties['lrtp_project'] === true; };
+        results = _.filter(results, predicate);               
     }
-    // 5. Did the search specify a TIP ID?
+    // 7. Was the search for MPO-funded projects?
+    if (mpo_funded == true) {
+        predicate = function(proj_rec) { return proj_rec.properties['mpo_project'] === true; };
+        results = _.filter(results, predicate);
+    }  
+    // 8. Was the search for projects involving a CTPS study?
+     if (ctps_study == true) {
+        predicate = function(proj_rec) { return (proj_rec.properties['mpo_ctps_study'] != null && proj_rec.properties['mpo_ctps_study'] != '') ; };
+        results = _.filter(results, predicate);
+    }   
+/*     
+    // 9. Did the search specify a TIP ID
+    // No longer supported...
     if (tip_id !== '0') {
         // Since there *should* be only one such record, we *should* be able to use _.find,
         // but I'm using _.filter "just in case" the data is funky, which it's been known to be.
-        predicate = function(proj_join_rec) { return proj_join_rec.properties['tip_id'] === tip_id; };
+        predicate = function(proj_rec) { return proj_rec.properties['tip_id'] === tip_id; };
         results = _.filter(results, predicate);
     }
+*/
+    // *** TBD sort results in order of ascending town (NOT town_id!) ...
     displayProjects(results);
 } // queryProjects()
 
@@ -316,7 +350,9 @@ function pinSymbol(color) {
 
 
 function displayProjects(aProjects) {
-    var i, sRawUrl, sUrl, tip_id, ctps_id, project_town_id, tip_spatial_rec, marker, pos, googleBounds, googleBoundsInit;
+    var i, j, tempstr, subregionstr, sRawUrl, sUrl, tip_id, ctps_id, 
+        project_town_rec, project_town_id, tip_spatial_rec, 
+        marker, pos, googleBounds, googleBoundsInit;
     var aData = [];
     
     // Remove any markers currently on the map
@@ -333,17 +369,39 @@ function displayProjects(aProjects) {
         // sUrl is the URL to go into the InfoWindow popup on the Google Map
         sUrl = '<a href="tipDetail.html?tip_id=' + tip_id +'"';
         sUrl += ' target=_blank>' + aProjects[i].properties['tip_id'] + '</a>';
+        subregionstr = tipCommon.cleanupFunkyString(aProjects[i].properties['subregions']);
         aData[i] = { 'id'             : 'id' + i,   // A unique id for each row is required by Slick Grid
                      'tip_id'         : tip_id,
                      'proj_name'      : aProjects[i].properties['proj_name'],
                      'proj_cat'       : aProjects[i].properties['proj_cat'],
-                     'town'           : aProjects[i].properties['town'],
+                     'towns'          : aProjects[i].properties['towns'],
+                     'subregions'     : subregionstr,
                      'cur_cost_est'   : aProjects[i].properties['cur_cost_est'],
                      'first_year_prog': aProjects[i].properties['first_year_prog']
                    };
         // If the project has a geographic representation, generate a Google Maps marker 
         if (aProjects[i].properties['has_geo'] === -1) {
-            project_town_id = aProjects[i].properties['project_town_id'];
+            // *** Please read the following comment carefully:
+            //
+            // As of 01/30/2019 the tip_projects_view table (theoretically) encapsulates nearly all key information 
+            // about projects other than their evaluation criteria scoring, funding/amendments, and proponents.
+            // It now contains fields that collect all municipalities and subregions (as text strings) in which
+            // the project is situated. The purpose of this is to no longer present a iisting of projects that
+            // is the cross-product of 'project' and 'town'. Heretofore the uniqe identifer of each element in
+            // this cross-product is/was the 'project_town_id', the primary purpose of which was to serve as
+            // an index into the 'tip_spatial' table which associates a point location with each such ID.
+            // Heretofore, the 'aProjects' array passed to this function was tje result of filtering the JOIN
+            // of the tip_projects and tip_project_town_table. It is now merely the result of filtering the
+            // tip projects table. The result of this is that a 'project_town_id' is no longer available 'at hand'
+            // as an attribute of each entry in 'aProjects'. Thus we have to obtain a 'project_town_id' manually.
+            // Since there may be more than one of these for any given project, when this is the case, the one
+            // we grab here is simply the first one found by searching tip_project_town on the project's tip_id.
+            // If you think you understood the above comment, you probably didn't. Please read it again.
+            // -- BK 01/30/2019
+            //
+            ctps_id = aProjects[i].properties['ctps_id'];
+            project_town_rec = _.find(DATA.proj_town, function(rec) { return rec.properties['ctps_id'] === ctps_id; });
+            project_town_id = project_town_rec.properties['project_town_id'];
             tip_spatial_rec = _.find(DATA.tip_spatial, function(rec) { return rec.properties['project_town_id'] === project_town_id; });
             if (tip_spatial_rec === undefined) {
                 // Defensive programming: This shouldn't happen, but just in case it does...

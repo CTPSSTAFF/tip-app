@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head lang="en">
 <meta charset="utf-8">
-<title>Prototype TIP Application Version 0.6</title>
+<title>Prototype TIP Application Version 0.7</title>
 
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.min.css"/>
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.structure.min.css"/>
@@ -22,9 +22,11 @@
 <script src="libs/SlickGrid-2.4.1/slick.grid.js"></script>
 <script src="libs/SlickGrid-2.4.1/slick.dataview.js"></script>
 <script src="libs/jquery.accessibleGrid-0.10.js"></script>
+<script src="libs/es6string.js"></script>
 <script src="libs/underscore-min.js"></script>
-<script src="libs/download.js"></script>
 <script src="tipCommon.js"></script>
+<script src="libs/download.js"></script>
+
 <!-- We probably won't need the Proj4 and turf libraries in the query page... -->
 <!--
 <script src="libs/proj4js-2.5.0/dist/proj4.js"></script>
@@ -37,11 +39,12 @@
 	<div class="darkBlue"></div>
 	<div id="banner"><a href="http://ctps.org/" target="_blank" title="Boston MPO"><img style="height:59px" src="./img/ctps_header.png" title="Opens Boston MPO website in a new window"></a></div>
 </div>
-<h1 class="pagetitle">Prototype TIP Application Version 0.6</h1>
+<h1 class="pagetitle">Prototype TIP Application Version 0.7</h1>
 <div id="wrapper">
     <div id="map_wrapper">
         <div id="search_div" role="search">
             <div style="display:inline-block"><strong>Search for projects:&nbsp;&nbsp;</strong></div>
+            <br/>
             <label for="select_town">Municipality:</label>
             <select id="select_town">
                 <option value="0">All</option>
@@ -143,20 +146,45 @@
                 <option value="347">Woburn</option>
                 <option value="350">Wrentham</option>  
             </select>
+            <label for="select_subregion">MAPC Subregion:</label>
+            <select id="select_subregion"> 
+                <option value="0">All</option>       
+                <option value="icc">ICC</option>
+                <option value="magic">MAGIC</option>
+                <option value="metrowest">Metrowest</option>
+                <option value="nspc">NSPC</option>
+                <option value="nstf">NSTF</option>
+                <option value="ssc">SSC</option>
+                <option value="swap">SWAP</option>
+                <option value="tric">TRIC</option>                
+            </select>  
             <!--- <option>s for the following <select> populated in init code. --->
             <label for="select_proj_category">Project category:</label>
             <select id="select_proj_category">
             </select>
+            <!-- Not yet sure how the <option>s for this <select> will be populated. -->
+            <label for="select_proj_status">Project status:</label>
+            <select id="select_proj_status">
+                <option value="all">All</option>
+            </select>            
             <!--- <option>s for the following <select> populated in init code. --->
             <label for="select_first_yr_prog">First year programmed</label>
             <select id="select_first_yr_prog">
             </select>
-            <label for="lrtp_project">LRTP project?</label>
-            <input type="checkbox" id="lrtp_project" name="lrtp_project" value="lrtp_project">           
             <!--- <option>s for the following <select> populated in init code. --->
+ <!--
             <label for="select_tip_id">TIP ID:</label>
             <select id="select_tip_id">
             </select>
+-->           
+            <br/>
+            <label for="lrtp_project">LRTP project?</label>
+            <input type="checkbox" id="lrtp_project" name="lrtp_project" value="lrtp_project">  
+            <label for="mpo_funded">MPO funded project?</label>
+            <input type="checkbox" id="mpo_funded" name="mpo_funded" value="mpo_funded">
+            <label for="mpo_funded">CTPS study?</label>
+            <input type="checkbox" id="ctps_study" name="ctps_study" value="ctps_study">
+            <br/>
             <input type="button" id="search_button" value="Search" />
             <a id="skip_forward_link" href="#skip_backward_link" class="element-invisible">Skip over Google Map to search results.</a>
         </div> <!-- search_div -->  

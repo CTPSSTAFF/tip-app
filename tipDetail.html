@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <head lang="en">
 <meta charset="utf-8">
-<title>Prototype TIP Project Detail Page Version 0.6</title>
+<title>Prototype TIP Project Detail Page Version 0.7</title>
 <link rel="stylesheet" href="tipDetail.css"/>
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.min.css"/>
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.structure.min.css"/>
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css"/>
-<script src="tipCommon.js"></script>
 <!-- The following line is needed for the Accessible Tabs package. -->
 <!--
 <script type="text/javascript">document.documentElement.className += " js";</script>
@@ -26,12 +25,14 @@
 <script src="libs/jquery.accessibleGrid-0.09.js"></script>
 -->
 <script src="libs/underscore-min.js"></script>
+<script src="tipCommon.js"></script>
 <script src="libs/download.js"></script>
 <!-- We probably won't need the Proj4 library in the detail page... -->
 <!--
 <script src="libs/proj4js-2.5.0/dist/proj4.js"></script>
 -->
 <script src="libs/turf.min.js"></script>
+<script src="libs/es6string.js"></script>
 </head>
 <body>
 <div class="ctpsHeader">
@@ -39,7 +40,7 @@
 	<div class="darkBlue"></div>
     <div id="banner"><a href="http://ctps.org/" target="_blank" title="Boston MPO"><img style="height:59px" src="./img/ctps_header.png" title="Opens Boston MPO website in a new window"></a></div>   
 </div>
-<h1 class="pagetitle">Prototype TIP Project Detail Page Version 0.6</h1>
+<h1 class="pagetitle">Prototype TIP Project Detail Page Version 0.7</h1>
 <div id="wrapper">
     <div id="map_wrapper">
         <h2 id="project_detail_header"></h2>
@@ -78,6 +79,11 @@
                         <tr>
                             <td id="municipality_header">Municipality</td>
                             <td id="muni_or_munis"></td>
+                        </tr>
+                        <!-- Subregion OR Subregions -->
+                        <tr>
+                            <td id="subregion_header">Subregion</td>
+                            <td id="subregion_or_subregions"></td>
                         </tr>
                         <!-- Proponent OR Proponents -->
                         <tr>
@@ -182,7 +188,24 @@
                         </tr> 
                         <!-- first_tier_list -->
                     </table>
+                    <div id="proponents_div_wrapper">
+                        <p>Proponents</p>
+                        <div id="proponents_div">
+                            <table id="proponents_table">
+                                <thead>
+                                    <tr>
+                                        <td>Proponent</td>
+                                        <td>Contact Name</td>
+                                        <td>Contact Information</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table> <!-- proponents_table -->
+                        </div> <!-- proponents_div -->                   
+                    </div> <!-- proponents_div_wrapper -->
                 </div> <!-- proj_overview -->
+                
                 <div class="tabbody" id="proj_safety">
                     <table>
                         <tr>
@@ -562,7 +585,24 @@
                             <td>Overall System Preservation Score</td>
                             <td id="overall_sys_pres_score" class="proj_data"></td>
                         </tr>                          
-                    </table>    
+                    </table> 
+                    <!-- Lloyd Bridges commemorative bridges div. -->                    
+                    <div id="lloyd_bridges_div">
+                        <p>Bridges</p>
+                        <table id="bridges_table">
+                            <thead>
+                                <tr>
+                                    <td>BDEPT</td>
+                                    <td>Bridge Rating</td>
+                                    <td>AASHTO Rating</td>
+                                    <td>Year Built</td>
+                                    <td>Year Rebuilt</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table> 
+                    </div> <!-- lloyd_bridges_div -->
                 </div> <!-- proj_sys_preservation -->           
                 <div class="tabbody" id="proj_capacity_mgt">
                     <table>

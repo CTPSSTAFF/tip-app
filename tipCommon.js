@@ -1,3 +1,8 @@
+// tipCommon.js - Library of common functions used in the (main) 'tipApp.js' and 'tipDetail.js' files.
+// ===> N.B. This library *requires* that the underscore.js library be loaded *before* it is loaded!
+//
+// Author: B. Krepp
+// Date: January, 2019
 (function() {
     // Locals (if any) go here
     //
@@ -30,8 +35,8 @@
                                     }
                                     return retval;
                                 }, // projCategoryToColor()
-        // moneyFormatter: format data value of type "money" with two decimal places and commas as needed
-        //                 the value should be prefixed by a '$'
+        // moneyFormatter: Format data value of type "money" with two decimal places and commas as needed
+        //                 the value should be prefixed by a '$'.
         moneyFormatter  :   function(row, cell, value, columnDef, dataContext) { 
                                   var retval, parts;
                                   if (value != null) {
@@ -51,6 +56,25 @@
                                       retval = '';
                                   }
                                   return retval;
-                            } // moneyFormatter()
+                            }, // moneyFormatter()
+        // cleanupFunkyString: Takes a string containing a comma-separated substrings - some of which may be duplicates
+        //                     and each of which may contain leading and/or trailing blanks, and returns a single string
+        //                     containing the unique substrings, comma-delimited.
+        //                     In pracitical terms, this function is used to 'clean up' the 'towns' and 'subregions'
+        //                     fields of the tip_projects table view.
+        //                     N.B. This function requires that the underscore.js library has been loaded *before* this file.
+        cleanupFunkyString: function(funkyString) {
+                                var i, tmp, retval;
+                                if (funkyString != null) {
+                                    tmp = funkyString.split(',');
+                                    for (i = 0; i < tmp.length; i++) {
+                                        tmp[i].replace(/ /g,'');
+                                    }
+                                    retval = _.uniq(tmp);
+                                } else {
+                                    retval = '';
+                                }
+                                return retval;
+                            } // cleanupFunkyString()
 	};
 })();

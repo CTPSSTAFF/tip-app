@@ -189,16 +189,15 @@ $(document).ready(function() {
                                         map.fitBounds(googleBounds);
                                     }, // success handler
                      error		: 	function (qXHR, textStatus, errorThrown ) {
-                                        alert('WFS request in initApp failed.\n' + 'Status: ' + textStatus + '\n' + 'Error:  ' + errorThrown);
+                                        alert('WFS request for data from cert_act:tip_spatial_line_project_4app failed.\n' + 'Status: ' + textStatus + '\n' + 'Error:  ' + errorThrown);
                                     } // error handler
             }); // $.ajax call - WFS request
         } // if (p.properties['has_geo'] === -1)     
     }); // handler for 'when loading of data is done' event
     
-    // Display tabular data for the project whose tip_project record has been passed as parameter 'p'
+    // Display tabular data for the project whose tip_project table view record has been passed as parameter 'p'
     function displayTabularData(p) {
-        var tmp;
-        
+        var tmp, i, j;
         $('#project_detail_header').html('TIP Project ' + p.properties['tip_id'] + ' : ' + p.properties['proj_name']);
         $('.proj_data').empty(); 
         
@@ -207,8 +206,11 @@ $(document).ready(function() {
         $('#proj_name').html(p.properties['proj_name']);
         $('#proj_desc').html(p.properties['proj_desc']);
         $('#proj_cat').html(p.properties['proj_cat']);
-        
-        // Municipality OR Municipalities
+        // Municipality OR Municipalities - summary line
+        // We can now grab this info directly from the tip_projects table 'view'
+        $('#muni_or_munis').html(tipCommon.cleanupFunkyString(p.properties['towns']));
+       
+/*
         var ctps_id, munis, town_id, town_rec, town_name, munis_rec, munis_str;
         ctps_id = p.properties['ctps_id'];
         munis = _.filter(DATA.proj_town, function(proj) { return proj.properties['ctps_id'] === ctps_id; });
@@ -227,8 +229,14 @@ $(document).ready(function() {
             }
             $('#muni_or_munis').html(munis_str);
         }
-        
-        // Proponent OR Proponents
+*/
+        // Subregion OR Subregions - summary line
+        // Again, this information is now collected in the tip_projects table 'view'
+        $('#subregion_or_subregions').html(tipCommon.cleanupFunkyString(p.properties['subregions']));
+        // Proponent OR Proponents - summary line
+        // We can now grab this info directly from the tip_projects table 'view'
+        $('#proponent_or_proponents').html(tipCommon.cleanupFunkyString(p.properties['proponents']));
+/*
         // Note: Project 'proponents' are listed in the city_town_lookup table.
         //       'Proponents' include cities/towns AND a few other entitles, e.g., MassDOT, 
         //       the MBTA, etc., each of which is given a 'town_id' (yeech!) as a unique identifier.
@@ -248,8 +256,8 @@ $(document).ready(function() {
                 props_str = '';
             }
             $('#proponent_or_proponents').html(props_str);
-        }        
-        
+        }   
+*/        
         $('#stip_prog').html(p.properties['stip_proj']);
         $('#proj_len').html(p.properties['proj_len']);
         $('#exist_lane_mi').html(p.properties['exist_lane_mi']);
@@ -264,7 +272,7 @@ $(document).ready(function() {
         $('#prc_year').html(p.properties['prc_year']); 
         $('#design_stat').html(p.properties['design_stat']); 
         // Remove 'Z' if it appears in a date - this appears to be a 'feature' of a JSON dump of a date/time field
-        tmp = (p.properties['design_stat_date'] != null) ? p.properties['design_stat_date'] != null.replace('Z','') : '';
+        tmp = (p.properties['design_stat_date'] != null) ? p.properties['design_stat_date'].replace('Z','') : '';
         $('#design_stat_date').html(tmp);  
         $('#adds_capacity').html(p.properties['adds_capacity'] === -1 ? 'Yes' : 'No');
         $('#lrtp_project').html(p.properties['lrtp_project'] === -1 ? 'Yes' : 'No');
@@ -277,9 +285,46 @@ $(document).ready(function() {
         $('#lrtp_identified_need').html(p.properties['lrtp_identified_need']);
         $('#amt_programmed').html(tipCommon.moneyFormatter(p.properties['amt_programmed']));
         $('#mun_priority').html(p.properties['mun_priority'] === -1 ? 'Yes' : 'No');
+        //
+        // Detailed info on proponent(s) and contact(s) for each proponent - at end of Summary tab
+        //
+        var ctps_id, proponents, prop_town_id, city_town_rec, proponent_name, contacts, contact, nameStr, infoStr, htmlString;
+        ctps_id = p.properties['ctps_id'];
+        proponents = _.filter(DATA.proj_proponent, function(prop) { return prop.properties['ctps_id'] == ctps_id; });
+        for (i = 0; i < proponents.length; i++) {
+            // Non-municipalities can be project proponents, but they, too, have a (pseudo) 'town_id'
+            prop_town_id = proponents[i].properties['town_id'];
+            city_town_rec = _.find(DATA.city_town_lut, function(city_town_lut_rec) { return city_town_lut_rec.id == 'tip_city_town_lookup.' + prop_town_id; });
+            proponent_name = city_town_rec.properties['town_name'];
+            contacts = _.filter(DATA.contacts, function(contact_rec) { return contact_rec.id == 'tip_contacts.' + prop_town_id });
+            htmlStr = '';           
+            // Note that contacts.length may === 0, e.g., if project proponent is MassDOT, there is no 'proponent contact' (One wonders why.)
+            if (contacts.length !=0) {
+                for (j = 0; j < contacts.length; j++) {
+                    nameStr = '';
+                    infoStr = '';
+                    contact = contacts[i];
+                    nameStr += contact.properties['contact_first_name'] + ' ' + contact.properties['contact_last_name'] + '<br/>';
+                    nameStr += contact.properties['contact_position'] + '<br/>';
+                    nameStr += contact.properties['contact_organization'];
+                    infoStr += contact.properties['contact_address1'] + '<br/>';
+                    infoStr += (contact.properties['contact_address2'] != null) ? contact.properties['contact_address2'] + '<br/>' : '';
+                    infoStr += contact.properties['contact_address_city'] + '<br/>';
+                    infoStr += contact.properties['contact_address_state'] + '<br/>'; // Wouldn't this aways be 'MA'???
+                    infoStr += contact.properties['contact_address_zip'] + '<br/>';
+                    infoStr += contact.properties['contact_telephone'] + '<br/>';
+                    infoStr += contact.properties['contact_email'];
+                    htmlStr += '<tr>' + '<td>' + proponent_name + '</td>' + '<td>' + nameStr + '</td>' + '<td>' + infoStr + '</td>' + '</tr>';
+                }
+            } else {
+                    htmlStr = '<tr>' + '<td>' + proponent_name + '</td><td></td><td></td>' + '</tr>';
+            }
+            $('#proponents_table > tbody').html(htmlStr);
+        }
+        var _DEBUG_HOOK_ = 0;
         
         // Prep for retreiving project evaluation criteria
-        var ctps_id = p.properties['ctps_id'];
+        //
         var queryString = 'tip_evaluation_criteria.' + ctps_id;
         var predicate = function(ec_record) { return ec_record.id === queryString };
         // N.B. The relation between the tip_projects table and the tip_evaluation_criteria table is 1-to-1.
@@ -382,6 +427,34 @@ $(document).ready(function() {
         $('#imprv_resp_xtrm_cnd_scor').html(ec.properties['imprv_resp_xtrm_cnd_scor']);
         $('#protects_frt_net_elem').html(ec.properties['protects_frt_net_elem']  === -1 ? 'Yes' : 'No');
         $('#overall_sys_pres_score').html(ec.properties['overall_sys_pres_score']);
+        //
+        // Bridge data (if any) is a sub-component of 'System Preservation'
+        var bridge, bdept, bridge_rating, aashto_rating, year_built, year_rebuilt, htmlString;
+        var bridge_components = _.filter(DATA.bridge_component, function(bcrec) { return bcrec.properties['ctps_id'] == ctps_id;});
+        if (bridge_components.length === 0) {
+            $('#lloyd_bridges_div').hide();
+        } else {
+            htmlString = '';
+            for (i = 0; i < bridge_components.length; i++) {
+                // Find relevant record in 'tip_bridge_data' table
+                bdept = bridge_components[i].properties['bdept'];
+                bridge = _.find(DATA.bridge_data, function(bdrec) { return bdrec['id'] == 'tip_bridge_data.' + bdept; });
+                bridge_rating = (bridge.properties['bridge_rating'] != null) ? bridge.properties['bridge_rating'] : '';
+                aashto_rating = (bridge.properties['aashto_rating'] != null) ? bridge.properties['aashto_rating'] : '';
+                year_built =    (bridge.properties['year_built'] != null) ? bridge.properties['year_built'] : '';
+                year_rebuilt =  (bridge.properties['year_rebuilt'] != null) ? bridge.properties['year_rebuilt'] : '';
+                // Generate the HTML to be injected into the <table><tbody> in the lloyd_bridges_div
+                htmlString += '<tr>';
+                htmlString += '<td>' + bdept + '</td>';
+                htmlString += '<td>' + bridge_rating + '</td>';
+                htmlString += '<td>' + aashto_rating + '</td>';
+                htmlString += '<td>' + year_built + '</td>';
+                htmlString += '<td>' + year_rebuilt + '</td>';
+                htmlString += '</tr>';
+            } 
+            $('#bridges_table > tbody').html(htmlString);
+            $('#lloyd_bridges_div').show();
+        }
 
         // Evaluation criteria - capacity management
         $('#mbta_bus_rtes').html(ec.properties['mbta_bus_rtes']);
