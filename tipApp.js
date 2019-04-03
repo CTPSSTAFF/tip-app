@@ -13,7 +13,8 @@ var tip_spatialURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfea
 
 // The following are pretty much invariant: load these as static, previously-generated GeoJSON files
 var mpo_boundaryURL = 'data/ctps_boston_region_mpo_97_land_arc.geojson';
-var mapc_subregionsURL = 'data/ctps_mapc_subregions_97_land_arc.geojson';
+// var mapc_subregion_boundariesURL = 'data/ctps_mapc_subregions_97_land_arc.geojson';
+var mapc_subregionsURL = 'data/mapc_subregions.geojson';
 
 // Global "database" of JSON returned from WFS requests
 var DATA = {};
@@ -68,6 +69,19 @@ var accGridOptions = { div_id    : 'project_list_contents_accessible',
                        colDesc   : accColDesc,
                        col1th    : true,
                        summary   : 'Selected TIP Projects' };
+                       
+var subregionFillColors = {
+    'ICC'       :  '#439c46',
+    'ICC/TRIC'  :  '#83466f',  
+    'MAGIC'     :  '#d99515',
+    'MWRC'      :  '#337aae',
+    'NSPC'      :  '#475ba9',
+    'NSTF'      :  '#f36d21',
+    'SSC'       :  '#037e9c',
+    'SWAP'      :  '#ed1d24',
+    'TRIC'      :  '#a74e15',
+    'TRIC/SWAP' :  '#f36d21'   // Currently duplicates 'NSTF'
+};
                        
 // Stuff for labeling (centroids of) MAPC subregions
 var subregionCentroids = {
@@ -164,17 +178,27 @@ $(document).ready(function() {
             return;         
         }
         
-        // Draw MAPC subregions on Google Map - note: this FC consists of MULTIPLE features
-        var i, lineFeature;
-        mapc_subregions_obj = JSON.parse(mapc_subregions[0]);
-        for (i = 0; i < mapc_subregions_obj.features.length; i++) {
-            lineFeature = mapc_subregions_obj.features[i];
+        var i, style; 
+/*
+        // Draw MAPC subregion *boundaries* on Google Map - note: this FC consists of MULTIPLE features
+        mapc_subregion_boundaries_obj = JSON.parse(mapc_subregion_boundaries[0]);
+        for (i = 0; i < mapc_subregion_boundaries_obj.features.length; i++) {
+            lineFeature = mapc_subregion_boundaries_obj.features[i];
             drawPolylineFeature(lineFeature, map, { strokeColor : subregionBoundaryColor, strokeOpacity : 1.0, strokeWeight: 1.5 });
         }
+*/       
+        // Draw MAPC subregion polygons on map
+        var mapc_subregions_obj = JSON.parse(mapc_subregions[0]);
+        style = { strokeColor : subregionBoundaryColor, strokeOpacity : 1.0, strokeWeight: 1.5, fillOpacity : 0.15 };
+        for (i = 0; i < mapc_subregions_obj.features.length; i++) {
+            name = mapc_subregions_obj.features[i].properties['name'];
+            style.fillColor = subregionFillColors[name];
+            drawPolygonFeature(mapc_subregions_obj.features[i], map, style);
+        } 
+        
         // Draw MPO boundary on Google Map - this FC consists of a single feature
         mpo_boundary_obj = JSON.parse(mpo_boundary[0]);
-        var lineFeature = mpo_boundary_obj.features[0];
-        drawPolylineFeature(lineFeature, map, { strokeColor : mpoBoundaryColor, strokeOpacity : 0.7, strokeWeight: 8 });
+        drawPolylineFeature(mpo_boundary_obj.features[0], map, { strokeColor : mpoBoundaryColor, strokeOpacity : 0.7, strokeWeight: 8 });
         
         // Label the centroids of the MAPC subregions using the MapLabel class from the Google Maps v3 Utility Library
         var mapLabel, latlng;
@@ -541,7 +565,7 @@ function displayProjects(aProjects) {
     }); // on-click event handler for 'Download' button 
 } // displayProjects() 
 
-// *** Temp home of utility function
+// *** Temp home of two utility functions
 function drawPolylineFeature(lineFeature, gMap, style) {
     var gmPolyline = {}, aFeatCoords = [], point = {}, aAllPoints = [];
     var i, j;
@@ -580,3 +604,49 @@ function drawPolylineFeature(lineFeature, gMap, style) {
         return;
     }
 } //drawPolylineFeature()
+
+function drawPolygonFeature(polygonFeature, gMap, style) {
+    var i, j, k, l, name, pt, part, path, paths;
+    name = polygonFeature.properties['name'];
+    if (polygonFeature.geometry.type == 'MultiPolygon' ) {
+        paths = [];
+        for (j = 0; j < polygonFeature.geometry.coordinates.length; j++) {
+            part = polygonFeature.geometry.coordinates[j];
+            path = [];
+            for (k = 0; k < polygonFeature.geometry.coordinates[j].length; k++) {
+                for (l = 0; l < polygonFeature.geometry.coordinates[j][k].length; l++) {
+                    pt = { lng : polygonFeature.geometry.coordinates[j][k][l][0],
+                           lat : polygonFeature.geometry.coordinates[j][k][l][1] };
+                    path.push(pt);
+                }
+                paths.push(path);
+            } 
+        } 
+        polygon = new google.maps.Polygon({
+            paths           : paths,
+            strokeColor     : style.strokeColor,
+            strokeOpacity   : style.strokeOpacity,
+            strokeWeight    : style.strokeWeight,
+            fillColor       : style.fillColor,
+            fillOpacity     : style.fillOpacity                            
+        });               
+        polygon.setMap(gMap);                
+    } else {
+    // geometry.type == 'Polygon'
+        path = [];
+        for (j = 0; j < polygonFeature.geometry.coordinates[0].length; j++) {
+            pt = { lng : polygonFeature.geometry.coordinates[0][j][0],
+                   lat : polygonFeature.geometry.coordinates[0][j][1] };
+            path.push(pt);
+        } 
+        polygon = new google.maps.Polygon({
+            paths           : path,
+            strokeColor     : style.strokeColor,
+            strokeOpacity   : style.strokeOpacity,
+            strokeWeight    : style.strokeWeight,
+            fillColor       : style.fillColor,
+            fillOpacity     : style.fillOpacity                            
+        });
+        polygon.setMap(gMap);
+    } // end-if over geometry.type    
+} // drawPolygonFeature()
