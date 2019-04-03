@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<head lang="en">
+<meta charset="utf-8">
+<title>Prototype TIP Project Detail Page  Version 0.01</title>
+<link rel="stylesheet" href="tipDetail.css"/>
+<!--
+<link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.min.css"/>
+<link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.structure.min.css"/>
+<link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css"/>
+-->
+<!-- The following line is needed for the Accessible Tabs package. -->
+<script type="text/javascript">document.documentElement.className += " js";</script>
+<link rel="stylesheet" href="libs/accessibleTabs-11Oct2016/slidingdoors/simple-sliding-doors.css" type="text/css" media="screen">
+<script src="//maps.googleapis.com/maps/api/js?sensor=false&key=AIzaSyBDKncJRheezxvvmheB8JLH4Dk7EHfdZEk"></script>
+<script src="libs/jquery-3.3.1.min.js"> </script>
+<!--
+<script src="libs/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+-->
+<script src="libs/accessibleTabs-11Oct2016/js/jquery.tabs.min.js"></script>
+<script src="libs/jquery.accessibleGrid-0.09.js"></script>
+<script src="libs/underscore-min.js"></script>
+<script src="libs/proj4js-2.5.0/dist/proj4.js"></script>
+<script src="libs/turf.min.js"></script>
+</head>
+<body>
+<div class="ctpsHeader">
+	<div class="lightBlue"></div>
+	<div class="darkBlue"></div>
+	<a href="http://ctps.org/" target="_blank" title="Boston MPO"><img src="./img/ctps_header.png" title="Opens Boston MPO website in a new window" id ="banner" ></a>
+</div>
+<h1 class="pagetitle">Prototype TIP Project Detail Page Version 0.01</h1>
+<div id="wrapper">
+    <div id="legend">
+    </div>
+    <div id="map_wrapper">
+        <div id="map">
+        </div>
+        <div id="project_detail_div">
+            <h2 id="project_detail_header"></div>
+            <div class="tabs" id="tabs_div">
+                <h2>Overview</h2>
+                <div class="tabbody" id="proj_overview">
+                    <table>
+                        <tr>
+                            <td>TIP ID</td>
+                            <td id="tip_id" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>PROJIS ID</td>
+                            <td id="projis" class="proj_data"></td>
+                        </tr>                      
+                        <tr>
+                            <td>Project Name</td>
+                            <td id="proj_name" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Description</td>
+                            <td id="proj_desc" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Category</td>
+                            <td id="proj_cat" class="proj_data"></td>
+                        </tr>    
+                        <tr>
+                            <td>STIP Program</td>
+                            <td id="stip_prog" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Project Length</td>
+                            <td id="proj_len" class="proj_data"></td>
+                        </tr>                         
+                        <tr>
+                            <td>Existing Lane-Miles</td>
+                            <td id="exist_lane_mi" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Lane-Miles Added or Improved</td>
+                            <td id="lane_mi_added_improved" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Total Lane-Miles</td>
+                            <td id="tot_lane_mi" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Sidewalk Miles</td>
+                            <td id="sidewalk_mi" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Sidewalk Miles Improved</td>
+                            <td id="sidewalk_mi_improved" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Miles of Exisiting On-road Bicycle Facilities</td>
+                            <td id="on_road_bike_fac_mi" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Miles of Exisiting Off-road Bicycle Facilities</td>
+                            <td id="off_road_bike_fac_mi" class="proj_data"></td>
+                        </tr>    
+                        <!-- in_target_universe -->
+                        <tr>
+                            <td>FDR On File</td>
+                            <td id="fdr_on_file" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Approved by PRC</td>
+                            <td id="prc_approved" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Year of PRC Approval</td>
+                            <td id="prc_year" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Design Status</td>
+                            <td id="design_stat" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Date of Design Status Update</td>
+                            <td id="design_stat_date" class="proj_data"></td>
+                        </tr>
+                        <!-- eval_cur_year -->
+                        <tr>
+                            <td>Adds Capacity</td>
+                            <td id="adds_capacity" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>LRTP Project</td>
+                            <td id="lrtp_project" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Current Cost Estimate</td>
+                            <td id="curr_cost_est" class="proj_data"></td>
+                        </tr>                       
+                        <tr>
+                            <td>Project Update Date</td>
+                            <td id="proj_update_date" class="proj_data"></td>
+                        </tr>                       
+                        <tr>
+                            <td>Funding Status</td>
+                            <td id="funding_stat" class="proj_data"></td>
+                        </tr>     
+                        <tr>
+                            <td>MPO Investment Program</td>
+                            <td id="mpo_invest_prog" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>LRTP Identified Need</td>
+                            <td id="lrtp_identified_need" class="proj_data"></td>
+                        </tr>  
+                        <!-- first_year_prog -->
+                        <tr>
+                            <td>Amount Programmed</td>
+                            <td id="amt_programmed" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Municipal Priority</td>
+                            <td id="mun_priority" class="proj_data"></td>
+                        </tr> 
+                        <!-- first_tier_list -->
+                        
+                    </table>
+                </div> <!-- proj_overview -->
+                
+                <h2>Safety</h2>
+                <div class="tabbody" id="proj_safety">
+                    <table>
+                        <tr>
+                            <td>Number of Fatal Crashes</td>
+                            <td id="num_fatal_crashes" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Number of Crashes with Injuries</td>
+                            <td id="num_injury_crashes" class="proj_data"></td>
+                        </tr>                        
+                        <tr>
+                            <td>Number of Crashes with Property Damage</td>
+                            <td id="num_property_crashes" class="proj_data"></td>
+                        </tr>   
+                        <tr>
+                            <td>Number of Crashes Involving Bicyclists</td>
+                            <td id="num_bicycle_crashes" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Number of Crashes Involving Pedestrians</td>
+                            <td id="num_ped_crashes" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Total Number of Crashes</td>
+                            <td id="num_total_crashes" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>EPDO</td>
+                            <td id="epdo" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Crash Severity Value Score</td>
+                            <td id="crash_severity_val_scor" class="proj_data"></td>
+                        </tr>                       
+                        <tr>
+                            <td>Project in HSIP Cluster</td>
+                            <td id="hsip_cluster" class="proj_data"></td>
+                        </tr>                      
+                        <tr>
+                            <td>Number of Truck Crashes</td>
+                            <td id="truck_crashes" class="proj_data"></td>
+                        </tr>                        
+                        <tr>
+                            <td>Crash Data Vintage</td>
+                            <td id="crash_years" class="proj_data"></td>
+                        </tr>                         
+                        <tr>
+                            <td>Crash Rate</td>
+                            <td id="crash_rate" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Intersection Type</td>
+                            <td id="intersec_type" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Urban Federal Functional Class</td>
+                            <td id="urb_fed_func_class" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Corridor Crash Rate Score</td>
+                            <td id="crash_score_corr" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Total ADT</td>
+                            <td id="total_adt" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Truck ADT</td>
+                            <td id="truck_adt" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Existing Pedestrian Facilities</td>
+                            <td id="exist_ped_facilities" class="proj_data"></td>
+                        </tr>  
+                        <tr>
+                            <td>Existing Pedestrian Safety Issues</td>
+                            <td id="exist_ped_safety_issues" class="proj_data"></td>
+                        </tr>   
+                        <tr>
+                            <td>Existing Pedestrian Use</td>
+                            <td id="exist_ped_use" class="proj_data"></td>
+                        </tr>                        
+                        <tr>
+                            <td>Description of Current Pedestrian Use</td>
+                            <td id="exist_ped_use_desc" class="proj_data"></td>
+                        </tr>    
+                        <tr>
+                            <td>Desired Pedestrian Use</td>
+                            <td id="desired_ped_use" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Description of Desired Pedestrian Use</td>
+                            <td id="desired_ped_use_desc" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Proposed Pedestrian Countermeasures</td>
+                            <td id="prop_ped_countermeas" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Evaluation of Proposed Pedestrian Countermeasures</td>
+                            <td id="ped_countermeas_eval" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Effectiveness of Pedestrian Countermeasures Score</td>
+                            <td id="ped_countermeas_score" class="proj_data"></td>
+                        </tr>                       
+                        <tr>
+                            <td>In Pedestrian HSIP Cluster</td>
+                            <td id="ped_hsip" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Bonus for Improving Safety at Pedestrian HSIP Cluster</td>
+                            <td id="ped_hsip_bonus_score" class="proj_data"></td>
+                        </tr>   
+                        <tr>
+                            <td>Existing Bicycle Facilities</td>
+                            <td id="ex_bike_facilities" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Description of Existing Bicycle Facilities</td>
+                            <td id="ex_bike_facilities_desc" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Existing Bicycle Safety Issues</td>
+                            <td id="ex_bike_safety_issues" class="proj_data"></td>
+                        </tr>                        
+                        <tr>
+                            <td>Current Bicycle Use</td>
+                            <td id="ex_bike_use" class="proj_data"></td>
+                        </tr>                         
+                        <tr>
+                            <td>Description of Current Bicycle Use</td>
+                            <td id="ex_bike_use_desc" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Desired Bicycle Use</td>
+                            <td id="desired_bike_use" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Description of Desired Bicycle Use</td>
+                            <td id="desired_bike_use_desc" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Proposed Bicycle Facilities</td>
+                            <td id="prop_bike_bike_facilities" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Description of Proposed Bicycle Facilities</td>
+                            <td id="prop_bike_bike_fac_desc" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Description of Proposed Bicycle Facilities / Countermeasures</td>
+                            <td id="bike_countermeas_eval" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Effectiveness of Bicycle Countermeasures Score</td>
+                            <td id="bike_countermeas_score" class="proj_data"></td>
+                        </tr>                        
+                        <tr>
+                            <td>Project in Bicycle HSIP Cluster</td>
+                            <td id="bike_hsip" class="proj_data"></td>
+                        </tr>
+                         <tr>
+                            <td>Bonus Score for Improving Safety at Bike HSIP Cluster</td>
+                            <td id="bike_hsip_bonus_score" class="proj_data"></td>
+                        </tr>  
+                        <tr>
+                            <td>EPDO of Crash Cluster with Highest EPDO in Project Area</td>
+                            <td id="max_cluster_epdo" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Roadway Deficiency for Trucks</td>
+                            <td id="truck_rdwy_deficiency" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Proposed Truck Countermeasures</td>
+                            <td id="prop_truck_countermeas" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Evaluation of Proposed Truck Countermeasures</td>
+                            <td id="truck_countermeas_eval" class="proj_data"></td>
+                        </tr>                         
+                        <tr>
+                            <td>Improves Truck Safety Score</td>
+                            <td id="truck_countermeas_eval" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Bonus Score for Improving Safety at Truck HSIP Cluster</td>
+                            <td id="trk_safety_bonus_scor" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Project Area Includes At-grade Railroad Crossing</td>
+                            <td id="at_grade_rr_xing" class="proj_data"></td>
+                        </tr>                          
+                        <tr>
+                            <td>Type of Safety Improvement of At-grade Railroad Crossing</td>
+                            <td id="rr_xing_improve" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Description of At-grade Railroad Crossing Improvements</td>
+                            <td id="rr_xing_improve" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Improves Safety at Railroad Crossing Score</td>
+                            <td id="rr_xing_improve_score" class="proj_data"></td>
+                        </tr> 
+                        <!-- This one probably belongs at the top -->
+                        <tr>
+                            <td>Overall Safety Score</td>
+                            <td id="overall_safety_score" class="proj_data"></td>
+                        </tr>                      
+                    </table>
+                </div> <!-- proj_safety -->
+                
+                <h2>System Preservation</h2>
+                <div class="tabbody" id="proj_sys_preservation">
+                    <table>
+                        <tr>
+                            <td>Project Includes Bridge Improvements</td>
+                            <td id="brdg_imprv_in_proj" class="proj_data"></td>
+                        </tr>                
+                        <tr>
+                            <td>Improves Substandard Bridge Score</td>
+                            <td id="imprv_substd_brdg_scor" class="proj_data"></td>
+                        </tr>                 
+                        <tr>
+                            <td>Pavement IRI Value</td>
+                            <td id="iri_value" class="proj_data"></td>
+                        </tr>               
+                        <tr>
+                            <td>IRI Rating</td>
+                            <td id="iri_rating" class="proj_data"></td>
+                        </tr>               
+                        <tr>
+                            <td>IRI Year</td>
+                            <td id="iri_year" class="proj_data"></td>
+                        </tr>                
+                        <tr>
+                            <td>Description of Existing Pavement Condition</td>
+                            <td id="exist_pavement_cond_desc" class="proj_data"></td>
+                        </tr>                
+                        <tr>
+                            <td>Improves Substandard Pavement Score</td>
+                            <td id="imprv_substd_pvmt_scor" class="proj_data"></td>
+                        </tr>                
+                        <tr>
+                            <td>Number of Signals in Project Area</td>
+                            <td id="total_signals_proj_area" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Number of Signals to Be Improved</td>
+                            <td id="signals_to_be_improved" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Description of Signal Condition</td>
+                            <td id="signal_desc" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Planned Signal Improvement</td>
+                            <td id="planned_signal_improv" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Improves Substandard Signals Score</td>
+                            <td id="imprv_substd_sig_scor" class="proj_data"></td>
+                        </tr>                        
+                        <tr>
+                            <td>Project Located in Hurricane Evacuation Zone</td>
+                            <td id="in_hurricane_evac_zn" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Project Improves Emergency Evaucation Route</td>
+                            <td id="imprv_evac_rte" class="proj_data"></td>
+                        </tr>
+                         <tr>
+                            <td>Project Improves Emergency Evaucation Route</td>
+                            <td id="imprv_evac_rte_score" class="proj_data"></td>
+                        </tr>                       
+                        <tr>
+                            <td>Project Lies Within a Flood Zone</td>
+                            <td id="in_flood_zone" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Description of Flooding-Related Problems in Project Area</td>
+                            <td id="flood_probs_desc" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Adresses Flooding Problems Score</td>
+                            <td id="addr_flooding_score" class="proj_data"></td>
+                        </tr>                        
+                        <tr>
+                            <td>Emergency Support Facilities within 1/4 Mile of Project</td>
+                            <td id="near_emerg_support_fac" class="proj_data"></td>
+                        </tr>                       
+                        <tr>
+                            <td>Emergency Support Facilities in Project Area</td>
+                            <td id="emerg_suppt_fac_names" class="proj_data"></td>
+                        </tr>                      
+                        <tr>
+                            <td>Project Improves Acess to Emergency Support Facilities</td>
+                            <td id="imprv_emerg_supp_acc" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Description of Improvements to Emergency Support Facility Access</td>
+                            <td id="imprv_emerg_supp_desc" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Improves Emergency Response Score</td>
+                            <td id="imprv_emerg_supp_score" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Project Brings Transit Asset into State of Good Repair</td>
+                            <td id="trnst_asset_to_good_repair" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Description of How Project Will Improve Transit Asset</td>
+                            <td id="trnst_asset_imprv_desc" class="proj_data"></td>
+                        </tr>                        
+                        <tr>
+                            <td>Project Meets Identified Need in Asset Management Plan</td>
+                            <td id="addr_asset_mgt_plan" class="proj_data"></td>
+                        </tr>                        
+                        <tr>
+                            <td>Improves Asset Management Score</td>
+                            <td id="imprv_transit_asset_scor" class="proj_data"></td>
+                        </tr>   
+                        <tr>
+                            <td>Existing Sidewalk Condition Rating</td>
+                            <td id="ex_sidewalk_cond_rat" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Existing Sidewalk Condition Characteristics</td>
+                            <td id="ex_sidewalk_cond_char" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Proposed Sidewalk Improvements</td>
+                            <td id="prop_sidewalk_imprv" class="proj_data"></td>
+                        </tr>    
+                        <tr>
+                            <td>Improved Substandard Sidewalks Score</td>
+                            <td id="imprv_substd_sdwlk_scor" class="proj_data"></td>
+                        </tr>   
+                        <tr>
+                            <td>Project Brings the Facility Up to Current Seismic Standards</td>
+                            <td id="to_seismic_design_std" class="proj_data"></td>
+                        </tr> 
+                        <tr>
+                            <td>Description of Issues Due to Facility Not Meeting Seismic Standards</td>
+                            <td id="seismic_std_issues" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Project Addresses Critial Transportation Infrastructure</td>
+                            <td id="addr_crit_infrastruc" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Project Addresses Critial Transportation Infrastructure</td>
+                            <td id="addr_crit_infrastruc" class="proj_data"></td>
+                        </tr>  
+                        <tr>
+                            <td>Description of Steps Taken to Address Critial Transportation Infrastructure</td>
+                            <td id="addr_crit_infras_steps" class="proj_data"></td>
+                        </tr>                          
+                        <tr>
+                            <td>Project Helps to Implement Hazard Mitigation and/or Climate Adaptation Plan</td>
+                            <td id="implem_haz_clim_plan" class="proj_data"></td>
+                        </tr>                        
+                        <tr>
+                            <td>Description of Contribution to Hazard Mitigation / Climate Adaptaion Plan</td>
+                            <td id="haz_clim_plan_desc" class="proj_data"></td>
+                        </tr>                         
+                        <tr>
+                            <td>Improves Response to Other Extreme Conditions Score</td>
+                            <td id="imprv_resp_xtrm_cnd_scor" class="proj_data"></td>
+                        </tr>                        
+                        <tr>
+                            <td>Project Protects Freight Network Elements</td>
+                            <td id="protects_frt_net_elem" class="proj_data"></td>
+                        </tr>                       
+                        <tr>
+                            <td>Overall System Preservation Score</td>
+                            <td id="overall_sys_pres_score" class="proj_data"></td>
+                        </tr>                          
+                    </table>    
+                </div> <!-- proj_sys_preservation -->
+                
+                <h2>Capacity Management</h2>
+                <div class="tabbody" id="proj_capacity_mgt">
+                    <table>
+                        <tr>
+                            <td>MBTA Bus Routes on Project Roadways</td>
+                            <td id="mbta_bus_rtes" class="proj_data"></td>
+                        </tr>
+                        <tr>
+                            <td>Other Transit Routes on Project Roadways</td>
+                            <td id="other_transit_rtes" class="proj_data"></td> 
+                        </tr>
+                         <tr>
+                            <td>Daily Transit Runs on Project Roadways</td>
+                            <td id="daily_transit_runs" class="proj_data"></td> 
+                        </tr>                       
+                        <tr>
+                            <td>No-build Signal Delay</td>
+                            <td id="nobld_signal_dealy" class="proj_data"></td> 
+                        </tr>                         
+                        <tr>
+                            <td>Build Signal Delay</td>
+                            <td id="bld_signal_dealy" class="proj_data"></td> 
+                        </tr>                        
+                        <tr>
+                            <td>Change in Signal Delay</td>
+                            <td id="chg_signal_dealy" class="proj_data"></td> 
+                        </tr> 
+                        <tr>
+                            <td>Change in Transit Vehicle Delay</td>
+                            <td id="chg_transit_veh_delay" class="proj_data"></td> 
+                        </tr>                        
+                        <tr>
+                            <td>Reduces Transit Delay Base Score</td>
+                            <td id="transit_delay_base_scor" class="proj_data"></td> 
+                        </tr> 
+                        <tr>
+                            <td>Project Improves Key Bus Route(s)</td>
+                            <td id="imprv_key_bus_rtes" class="proj_data"></td> 
+                        </tr>
+                        <tr>
+                            <td>Improves Key Bus Route(s) Bonus Score</td>
+                            <td id="transt_delay_bonus_scor" class="proj_data"></td> 
+                        </tr>
+                        <tr>
+                            <td>Project Adds New Sidewalks</td>
+                            <td id="adds_new_sidewalks" class="proj_data"></td> 
+                        </tr>
+                        <tr>
+                            <td>Project Includes ADA Accessibility Improvements</td>
+                            <td id="imprv_ada_access" class="proj_data"></td> 
+                        </tr>
+                        <tr>
+                            <td>Project Includes an Identified Gap in the Pedestrian Network</td>
+                            <td id="id_ped_net_gap" class="proj_data"></td> 
+                        </tr>
+                        <tr>
+                            <td>Description of Gap in the Pedestrian Network</td>
+                            <td id="ped_net_gap_descr" class="proj_data"></td> 
+                        </tr>                      
+                        <tr>
+                            <td>Improves Pedestrian Network and ADA Accessibility Score</td>
+                            <td id="imprv_ped_net_score" class="proj_data"></td> 
+                        </tr>                        
+                        <tr>
+                            <td>Project Includes an Identified Gap in the Bicycle Network</td>
+                            <td id="id_bike_net_gap" class="proj_data"></td> 
+                        </tr>                        
+                        <tr>
+                            <td>Description of Gap in the Bicycle Network</td>
+                            <td id="bike_net_gap_descr" class="proj_data"></td> 
+                        </tr>                          
+                        <tr>
+                            <td>Improves Bicycle Network Score</td>
+                            <td id="imprv_bike_net_score" class="proj_data"></td> 
+                        </tr>                         
+                        <tr>
+                            <td>Description of Improvements to Transit Connections</td>
+                            <td id="trnst_conn_imprv_desc" class="proj_data"></td> 
+                        </tr>                        
+                        <tr>
+                            <td>Transit Connection Improvement Assessment</td>
+                            <td id="trnst_conn_imprv_assmt" class="proj_data"></td> 
+                        </tr>                        
+                        <tr>
+                            <td>Intermodal Facility Use Assessment</td>
+                            <td id="intrmodl_fac_use_assmt" class="proj_data"></td> 
+                        </tr>                         
+                        <tr>
+                            <td>Applicable Data to Backup Intermodal Use Assessment</td>
+                            <td id="intrmodl_fac_use_data" class="proj_data"></td> 
+                        </tr>                        
+                        <tr>
+                            <td>Improves Intermodal Connections to Transit Score</td>
+                            <td id="imprv_intrmodl_conn_scor" class="proj_data"></td> 
+                        </tr>                       
+                        <tr>
+                            <td>Description of Truct-related Roadway Conditions</td>
+                            <td id="trk_rdwy_cond_desc" class="proj_data"></td> 
+                        </tr>                        
+                        <tr>
+                            <td>Description of Truct-related Deficiencies</td>
+                            <td id="trk_deficiencies_desc" class="proj_data"></td> 
+                        </tr>                        
+                        <tr>
+                            <td>Assessment of Truck Movement Improvements</td>
+                            <td id="trk_mvmt_improv_asssmt" class="proj_data"></td> 
+                        </tr>                       
+                        <tr>
+                            <td>Project Area Includes MPO-identified Bottleneck Location(s)</td>
+                            <td id="bottleneck_loc" class="proj_data"></td> 
+                        </tr>                        
+                        <tr>
+                            <td>Improves Truck Movement Score</td>
+                            <td id="improv_trk_mvmt_scor" class="proj_data"></td> 
+                        </tr>
+                        <tr>
+                            <td>Vehicle Delay Change</td>
+                            <td id="veh_delay_chg" class="proj_data"></td> 
+                        </tr>
+                        <tr>
+                            <td>Reduces Vehicle Congestion Score</td>
+                            <td id="reduc_veh_cong_scor" class="proj_data"></td> 
+                        </tr>
+                        <tr>
+                            <td>Overall Capacity Management / Mobility Score</td>
+                            <td id="overall_cp_mgmt_score" class="proj_data"></td> 
+                        </tr>
+                    </table>  
+                </div> <!-- proj_capacity_mgt --> 
+                
+                <h2>Clean Air / Clean Communities</h2>
+                <div class="tabbody" id="proj_clean">
+                    <table>
+                        <tr>
+                            <td>Project is Located in an EOEEA-certified Green Community</td>
+                            <td id="in_green_community" class="proj_data"></td>                         
+                        </tr>
+                        <tr>
+                            <td>EOEEA-certified Green Community Score</td>
+                            <td id="green_community_scor" class="proj_data"></td>                         
+                        </tr>                        
+                        <tr>
+                            <td>CO2 Impact - Change in Annual Tons</td>
+                            <td id="co2_tons_reduced" class="proj_data"></td>                         
+                        </tr>                       
+                        <tr>
+                            <td>Reduces CO2 Score</td>
+                            <td id="reduces_co2_score" class="proj_data"></td>                         
+                        </tr>                       
+                        <tr>
+                            <td>Other Emissions (VOC, NOx, CO) Impact - Annual Change in Tons</td>
+                            <td id="emissions_change" class="proj_data"></td>                         
+                        </tr>                        
+                        <tr>
+                            <td>Reduces Other Emissions Score</td>
+                            <td id="reduc_emissions_scor" class="proj_data"></td>                         
+                        </tr>                        
+                        <tr>
+                            <td>Stormwater Best Management Practices Included in Project</td>
+                            <td id="strmwtr_best_pract" class="proj_data"></td>                         
+                        </tr>                        
+                        <tr>
+                            <td>Description of Stormwater Best Management Practices Included in Project</td>
+                            <td id="strmwtr_best_pract_desc" class="proj_data"></td>                         
+                        </tr>                        
+                        <tr>
+                            <td>Project Includes Improvments to Cultural Resources and/or Open Space</td>
+                            <td id="cult_res_os_improv" class="proj_data"></td>                         
+                        </tr>      
+                        <tr>
+                            <td>Description of Cultural Resources / Open Space Improvements</td>
+                            <td id="cult_res_os_improv_desc" class="proj_data"></td>                         
+                        </tr>
+                        <tr>
+                            <td>Does Project Enhance or Improve Wetlands Resources</td>
+                            <td id="wetlands_res_improv" class="proj_data"></td>                         
+                        </tr>
+                        <tr>
+                            <td>Description of Wetlands / Stormwater Management Improvements</td>
+                            <td id="wetlands_res_improv_desc" class="proj_data"></td>                         
+                        </tr>
+                        <tr>
+                            <td>Preservation Areas / Protected Habitats in the Project Area?</td>
+                            <td id="wildlife_area_imprv" class="proj_data"></td>                         
+                        </tr>                        
+                        <tr>
+                            <td>Description of Wildlife Preservation Improvements</td>
+                            <td id="wildlife_area_imprv_desc" class="proj_data"></td>                         
+                        </tr>  
+                        <tr>
+                            <td>Addresses Environmental Impacts Score</td>
+                            <td id="addr_env_impct_score" class="proj_data"></td>                         
+                        </tr> 
+                        <tr>
+                            <td>Overall Clean Air / Clean Communities Score</td>
+                            <td id="overall_cln_air_score" class="proj_data"></td>                         
+                        </tr>
+                    </table>
+                </div> <!-- proj_clean -->
+                
+                <h2>Transportation Equity</h2>
+                <div class="tabbody" id="proj_tequity">
+                    <table>
+                        <tr>
+                            <td>Minority Percentage of Project Area Population</td>
+                            <td id="min_pop_pct" class="proj_data"></td>                           
+                        </tr>
+                        <tr>
+                            <td>Minority Population Count of Project Area</td>
+                            <td id="min_pop_count" class="proj_data"></td>                           
+                        </tr>                        
+                        <tr>
+                            <td>Minority Population Concentration of Project Area</td>
+                            <td id="min_pop_concent" class="proj_data"></td>                           
+                        </tr>                         
+                        <tr>
+                            <td>Serves Minority Population Score</td>
+                            <td id="min_pop_score" class="proj_data"></td>                           
+                        </tr>                         
+                        <tr>
+                            <td>Low Income Percentage of Project Area Households</td>
+                            <td id="low_inc_hh_pct" class="proj_data"></td>                           
+                        </tr>                       
+                        <tr>
+                            <td>Count of Low Income Households in Project Area</td>
+                            <td id="low_inc_hh_count" class="proj_data"></td>                           
+                        </tr>                        
+                        <tr>
+                            <td>Count of Low Income Concentration in Project Area</td>
+                            <td id="low_inc_hh_count" class="proj_data"></td>                           
+                        </tr>                        
+                        <tr>
+                            <td>Serves Low Income Households Score</td>
+                            <td id="low_inc_hh_score" class="proj_data"></td>                           
+                        </tr>                       
+                        <tr>
+                            <td>Limited-English Proficient (LEP) Percentage of Project Area Population</td>
+                            <td id="lep_pop_pct" class="proj_data"></td>                           
+                        </tr>     
+                        <tr>
+                            <td>LEP Population Count of Project Area</td>
+                            <td id="lep_pop_count" class="proj_data"></td>                           
+                        </tr> 
+                        <tr>
+                            <td>LEP Population Concentration of Project Area</td>
+                            <td id="lep_pop_concent" class="proj_data"></td>                           
+                        </tr>                         
+                        <tr>
+                            <td>Serves LEP Population Score</td>
+                            <td id="lep_pop_score" class="proj_data"></td>                           
+                        </tr>
+                        <tr>
+                            <td>Elderly (Over 75) Population Percentage of Project Area</td>
+                            <td id="elderly_pop_pct" class="proj_data"></td>                           
+                        </tr>
+                        <tr>
+                            <td>Elderly Population Count of Project Area</td>
+                            <td id="elderly_pop_count" class="proj_data"></td>                           
+                        </tr>
+                        <tr>
+                            <td>Elderly Population Concentration of Project Area</td>
+                            <td id="elderly_pop_concent" class="proj_data"></td>                           
+                        </tr>  
+                        <tr>
+                            <td>Serves Elderly Population Score</td>
+                            <td id="elderly_pop_score" class="proj_data"></td>                           
+                        </tr>                         
+                        <tr>
+                            <td>Zero-vehnicle Household Percentage of Project Area</td>
+                            <td id="zero_veh_hh_pct" class="proj_data"></td>                           
+                        </tr>                        
+                        <tr>
+                            <td>Zero-vehnicle Household Count of Project Area</td>
+                            <td id="zero_veh_hh_count" class="proj_data"></td>                           
+                        </tr>                        
+                        <tr>
+                            <td>Zero-vehnicle Household Concentration of Project Area</td>
+                            <td id="zero_veh_hh_concent" class="proj_data"></td>                           
+                        </tr>                       
+                        <tr>
+                            <td>Serves Zero-vehnicle Households Score</td>
+                            <td id="zero_veh_hh_score" class="proj_data"></td>                           
+                        </tr>                       
+                        <tr>
+                            <td>Percentage of Project Area Dibabled</td>
+                            <td id="disabled_pop_pct" class="proj_data"></td>                           
+                        </tr>                        
+                        <tr>
+                            <td>Count of Project Area Population with Disabilities</td>
+                            <td id="disabled_pop_count" class="proj_data"></td>                           
+                        </tr>                        
+                        <tr>
+                            <td>Disabled Population Concentration of Project Area</td>
+                            <td id="disabled_pop_concent" class="proj_data"></td>                           
+                        </tr>                       
+                        <tr>
+                            <td>Serves Persons with Disabilities Score</td>
+                            <td id="disabled_pop_score" class="proj_data"></td>                           
+                        </tr>                        
+                        <tr>
+                            <td>Project Creates a Burden for Title VI / Non-discrimination Populations</td>
+                            <td id="creates_ttl6_ej_burden" class="proj_data"></td>                           
+                        </tr>                         
+                        <tr>
+                            <td>Creates a Burden fo Title VI / Non-discrimination Populations Penalty</td>
+                            <td id="creates_burden_score" class="proj_data"></td>                           
+                        </tr>                       
+                        <tr>
+                            <td>Overall Transportation Equity Score</td>
+                            <td id="overall_equity_score" class="proj_data"></td>                           
+                        </tr>                        
+                    </table>
+                </div> <!-- proj_tequity -->
+
+                <h2>Economic Vitality</h2>
+                <div class="tabbody" id="proj_economic">
+                    <table>
+                        <tr>
+                            <td>Project Serves a Targeted Economic Development Site</td>
+                            <td id="near_targ_dev_site" class="proj_data"></td>                       
+                        </tr>
+                        <tr>
+                            <td>Name of Targeted Development Site</td>
+                            <td id="targ_dev_site_name" class="proj_data"></td>                       
+                        </tr>                       
+                        <tr>
+                            <td>Description of Access Improvements to Targeted Development Site</td>
+                            <td id="targ_dev_site_acc_imprv" class="proj_data"></td>                       
+                        </tr>                        
+                        <tr>
+                            <td>Description of New or Improved Transit Access to or Within Site</td>
+                            <td id="td_transit_access_chg" class="proj_data"></td>                       
+                        </tr>                        
+                        <tr>
+                            <td>Project Provides for Bicycle Access to or Within Targeted Development Site</td>
+                            <td id="td_bike_access_chg" class="proj_data"></td>                       
+                        </tr>                       
+                        <tr>
+                            <td>Project Provides for Pedestrian Access to or Within Targeted Development Site</td>
+                            <td id="td_ped_access_chg" class="proj_data"></td>                       
+                        </tr>                        
+                        <tr>
+                            <td>Project Provides for Improved Rod Access to or Within Targeted Development Site</td>
+                            <td id="td_road_access_chg" class="proj_data"></td>                       
+                        </tr>                        
+                        <tr>
+                            <td>Serves Targeted Development Site Score</td>
+                            <td id="serves_targ_dev_score" class="proj_data"></td>                       
+                        </tr>   
+                        <tr>
+                            <td>Area of Concentrated Development is Present in the Project Area</td>
+                            <td id="conc_dev_area" class="proj_data"></td>                       
+                        </tr>
+                        <tr>
+                            <td>Project Mostly or Partly Serves an Area of Concentrated Development</td>
+                            <td id="conc_dev_proj_overlap" class="proj_data"></td>                       
+                        </tr>
+                        <tr>
+                            <td>Project Area Has Zoning or Other Regulations Supportive of Smart Growth</td>
+                            <td id="smart_growth_zoning" class="proj_data"></td>                       
+                        </tr>                        
+                        <tr>
+                            <td>Presence of a Commercial District Served by a Commerical District Organization, etc.</td>
+                            <td id="has_commerc_dist_org" class="proj_data"></td>                       
+                        </tr>                        
+                        <tr>
+                            <td>Name of Commercial District Organization</td>
+                            <td id="commerc_dist_org_name" class="proj_data"></td>                       
+                        </tr>                       
+                        <tr>
+                            <td>Provides for Development Consistent with MetroFuture Score</td>
+                            <td id="consist_metro_fut_scor" class="proj_data"></td>                       
+                        </tr>                        
+                        <tr>
+                            <td>Project Improves Mltimodal Access to an Area of High Economic Activity</td>
+                            <td id="improv_acc_hi_econ_act" class="proj_data"></td>                       
+                        </tr>                        
+                        <tr>
+                            <td>Project Improves Transit Access to an Area of High Economic Activity</td>
+                            <td id="improv_act_ctr_transit_acc" class="proj_data"></td>                       
+                        </tr>                         
+                        <tr>
+                            <td>Project Improves Pedestrian Access to an Area of High Economic Activity</td>
+                            <td id="improv_act_ctr_ped_acc" class="proj_data"></td>                       
+                        </tr>                        
+                        <tr>
+                            <td>Project Improves Bicycle Access to an Area of High Economic Activity</td>
+                            <td id="improv_act_ctr_bike_acc" class="proj_data"></td>                       
+                        </tr>                        
+                        <tr>
+                            <td>Project Improves Truck Access to an Area of High Economic Activity</td>
+                            <td id="improv_act_ctr_truck_acc" class="proj_data"></td>                       
+                        </tr>                       
+                        <tr>
+                            <td>Improves Multimodal Acces to an Activity Center Score</td>
+                            <td id="improv_act_ctr_truck_acc" class="proj_data"></td>                       
+                        </tr>  
+                        <tr>
+                            <td>Type of non-TIP Investment in Project</td>
+                            <td id="non_tip_invest_type" class="proj_data"></td>                       
+                        </tr>
+                        <tr>
+                            <td>Percentage of Project Cost Covered by non-TIP Investments</td>
+                            <td id="non_tip_invest_pct" class="proj_data"></td>                       
+                        </tr>                       
+                        <tr>
+                            <td>Leverages Other Investments Score</td>
+                            <td id="lev_othr_invest_score" class="proj_data"></td>                       
+                        </tr>                       
+                        <tr>
+                            <td>Overall Economic Vitality Score</td>
+                            <td id="overall_econ_vital_score" class="proj_data"></td>                       
+                        </tr>   
+                        <!-- The following pretty much obviously doesn't belong here. -->
+                         <tr>
+                            <td>Overall Evaluation Score</td>
+                            <td id="overall_eval_score" class="proj_data"></td>                       
+                        </tr>                       
+                    </table>
+                </div>  <!-- proj_economic -->
+            </div> <!-- tabs_div -->
+        </div> <!-- project_detail_div -->
+    </div> <!-- map_wrapper -->
+</div> <!-- wrapper div -->
+<script src="tipDetail.js"></script>
+</body>
+</html>
