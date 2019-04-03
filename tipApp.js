@@ -1,12 +1,44 @@
-proj4.defs('EPSG:26986', '+proj=lcc +lat_1=42.68333333333333 +lat_2=41.71666666666667 +lat_0=41 +lon_0=-71.5 +x_0=200000 +y_0=750000 +ellps=GRS80 +datum=NAD83 +units=m +no_defs');
-proj4.defs('EPSG:4326', '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs');
-
 var wfsServerRoot = location.protocol + '//' + location.hostname + ':8080/geoserver/wfs';
 // Global "database" of JSON returned from WFS requests
 var DATA = {};
- 
+// Global Google Maps map object
+var map = {};
+// All Google Maps markers currently on the map
+var aMarkers = [];
+// infoWindow 'popup' for markers for point features
+var infoWindow = null;
+// Stuff for Slick Grid:
+// Global grid object, grid options, column definitions, and dataView object
+var grid = null;
+var gridOptions = { enableColumnReorder : false };
+var moneyFormatter =  function(row, cell, value, columnDef, dataContext) { 
+                          var retval, tmp;
+                          if (value != null) {
+                              tmp = value.toLocaleString();
+                              retval = (tmp.indexOf('.') === -1) ? tmp + '.00' : tmp;
+                          } else {
+                              retval = '';
+                          }
+                          return retval;
+                      } // moneyFormatter()
+// N.B. The width values reflect the jQueryUI font size being throttled-back to 80% of its default size
+var gridColumns = [ // { id : 'foobar_col',    name : 'FOOBAR',       field : 'foobar', width : 100, sortable : true },
+                    { id : 'tip_id_col',    name : 'TIP ID',       field : 'tip_id', width : 80, sortable: true,
+                      formatter : function(row, cell, value, columnDef, dataContext) {
+                                      return '<a href=tipDetail.html?tip_id=' + dataContext['tip_id'] + ' target=_blank">' + dataContext['tip_id'] + '</a>';
+                                  } 
+                    },
+                    { id : 'proj_name_col',       name : 'Project Name',              field : 'proj_name',      width : 650, sortable : false }, 
+                    { id : 'proj_cat_col',        name : 'Category',                  field : 'proj_cat',       width : 150, sortable : true },
+                    { id : 'town_col',            name : 'Municipality',              field : 'town',           width : 150, sortable : true },
+                    { id : 'cur_cost_est_col',    name : 'Current Cost Estimate ($)', field : 'cur_cost_est',   width : 170, sortable : true, 
+                      cssClass : 'moneyColumn',   formatter : moneyFormatter }, 
+                    { id : 'amt_programmed_col',  name : 'Amount Programmed ($)',     field : 'amt_programmed', width : 170, sortable : true, 
+                      cssClass : 'moneyColumn',   formatter: moneyFormatter  } 
+                 ];
+var dataView = null;
+
 $(document).ready(function() {
-    // Load data
     var projectsURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_projects_view&outputformat=json';
     var eval_criteriaURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_evaluation_criteria&outputformat=json';
     var bridge_componentURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_bridge_component_view&outputformat=json';
@@ -23,7 +55,8 @@ $(document).ready(function() {
     var getJson = function(url) {
         return $.get(url, null, 'json');
     };
-        
+
+    // Load data    
     $.when(getJson(projectsURL),   
            getJson(proj_townURL),  
            getJson(city_town_lutURL),  
@@ -70,7 +103,7 @@ $(document).ready(function() {
             } // for j
         } // for i     
          
-        var oSelect, oOption, i;
+        var oSelect, oOption;
         // Populate the <select> box for TIP_ID
         oSelect = document.getElementById("select_tip_id");
         oOption = document.createElement("OPTION");
@@ -98,19 +131,35 @@ $(document).ready(function() {
             oOption.text =  aCategories[i].properties['proj_cat'];
             oSelect.options.add(oOption); 
         }
-        // Don't think this LUT needs to be in the global "database", 
-        // but putting it there "just in case" - for the time being 
-        DATA.proj_cat = proj_cat[0].features;
+        
+        // Set up the machinery for the Slick Grid
+        dataView = new Slick.Data.DataView();
+        grid = new Slick.Grid('#project_list_contents', dataView, gridColumns, gridOptions);
+        dataView.onRowCountChanged.subscribe(function(e, args) {
+            grid.updateRowCount();
+            grid.render();
+        });
+        dataView.onRowsChanged.subscribe(function(e, args) {
+            grid.invalidateRows(args.rows);
+            grid.render();
+        });
+        // Right now, we only support numeric sorting... more TBD
+        grid.onSort.subscribe(function(e, args) {
+            function NumericSorter(a, b) {
+                var x = a[sortcol], y = b[sortcol];
+                return sortdir * (x == y ? 0 : (x > y ? 1 : -1));
+            }
+            var sortdir = args.sortAsc ? 1 : -1;
+            var sortcol = args.sortCol.field;
+            dataView.sort(NumericSorter, sortdir);
+            
+            args.grid.invalidateAllRows();
+            args.grid.render();
+        });
+       
         initApp(DATA); // No need to pass DATA as parm, but doing so anyway
     });
 });	// $(document).ready event handler
-
-// Global Google Maps map object
-var map = {};
-// All Google Maps markers currently on the map
-var aMarkers = [];
-// infoWindow 'popup' for point features
-var infoWindow = null;
 
 function initApp(data) {
 	var regionCenterLat = 42.345111165; 
@@ -137,7 +186,7 @@ function initApp(data) {
     // Believe it or not: When a Google Maps map object is created, its bounding
     // box is undefined (!!). Thus calling map.getBounds on a newly created map
     // will raise an error. We are compelled to force a "bounds_changed" event to fire.
-    // Larry and Sergey: How did you let this one get through the cracks, guys?
+    // Larry and Sergey: How did you let this one get through the cracks, guys? C'mon!
     map.setCenter(new google.maps.LatLng(lat + 0.000000001, lng + 0.000000001));
     
     $('#searchButton').click(function queryProjects(e) {
@@ -177,7 +226,6 @@ function initApp(data) {
         displayProjects(results);
     }); // queryProjects: on-click event handler for "Search" button
 } // initApp()
-
 
 // Generate a Google Maps "marker" pin symbol with the specified color.
 // Source: https://stackoverflow.com/questions/7095574/google-maps-api-3-custom-marker-color-for-default-dot-marker/7686977#7686977
@@ -219,28 +267,37 @@ function projCategoryToColor(project) {
     return retval;
 } // projTypeToColor
 
+// TEMP, during dev
+function generateRandomInteger(min, max) {
+  return Math.floor(min + Math.random()*(max + 1 - min))
+}
+
 function displayProjects(aProjects) {
-    var i, sUrl, aData = [], tip_id, ctps_id, project_town_id, tip_spatial_rec, marker, googleBounds, inCoords, outCoords, pos;
-    // Clear the tabular list of projects, and remove any markers currently on the map
-    $('#project_list_contents').empty();
+    var i, sRawUrl, sUrl, aData = [], tip_id, ctps_id, project_town_id, tip_spatial_rec, marker, googleBounds, pos;
+    
+    // Remove any markers currently on the map
     aMarkers.forEach(function(marker) { marker.setMap(null); });
     if (infoWindow !== null) { infoWindow.close(); }
-    if (aProjects.length === 0) {
-        $('#project_list_contents').html('<p><strong>No projects found.</strong></p>');
-        return;
-    } 
-
+    
     var googleBounds = new google.maps.LatLngBounds();
     var googleBoundsInit = new google.maps.LatLngBounds(); // For testing if bounds have changed - See below
     for (i = 0; i < aProjects.length; i++) {
         // Accumulate data for table as we go along
-        tip_id = aProjects[i].properties['tip_id']
+        tip_id = aProjects[i].properties['tip_id'];
+        // sRawUrl is the URL to go into the table, which will be formatted by a Slick Grid 'formatter' function
+        sRawUrl = 'href="tipDetail.html?tip_id=' + tip_id;
+        // sUrl is the URL to go into the InfoWindow popup on the Google Map
         sUrl = '<a href="tipDetail.html?tip_id=' + tip_id +'"';
         sUrl += ' target=_blank>' + aProjects[i].properties['tip_id'] + '</a>';
-        aData[i] = { 'tip_id'    : sUrl,
-                     'proj_name' : aProjects[i].properties['proj_name'],
-                     'town'      : aProjects[i].properties['town'],
-                     'proj_cat'  : aProjects[i].properties['proj_cat'] };
+        aData[i] = { 'id'             : 'id' + i,
+                     // 'foobar'         : generateRandomInteger(0,100),
+                     'tip_id'         : tip_id,
+                     'proj_name'      : aProjects[i].properties['proj_name'],
+                     'proj_cat'       : aProjects[i].properties['proj_cat'],
+                     'town'           : aProjects[i].properties['town'],
+                     'cur_cost_est'   : aProjects[i].properties['cur_cost_est'],
+                     'amt_programmed' : aProjects[i].properties['amt_programmed']
+                   };
         // If the project has a geographic representation, generate a Google Maps marker 
         if (aProjects[i].properties['has_geo'] === -1) {
             project_town_id = aProjects[i].properties['project_town_id'];
@@ -252,17 +309,7 @@ function displayProjects(aProjects) {
                 // alert(tmpStr);
                 console.log(tmpStr);
             } else {
-                // N.B. The following statement does not work RELIABILY because the 'latitutde' and 'longitude' 
-                //      attributes of some tip_spatial records sometimes haven't been correctly computed.
-                //      Consequently, we may have to rely on the 'geometry' of the tip_spatial record 
-                //      (which is expressed in EPSG:26986), projecting it to EPSG:4326.
-                //      The code to do this, below, is currently commented out.
                 pos = { lat : tip_spatial_rec.properties['latitude'], lng : tip_spatial_rec.properties['longitude'] };
-                /*
-                inCoords = { x: tip_spatial_rec.geometry.coordinates[0], y : tip_spatial_rec.geometry.coordinates[1] };
-                outCoords = proj4('EPSG:26986', 'EPSG:4326', inCoords);
-                pos = { lat : outCoords.y, lng : outCoords.x };
-                */
                 marker = new google.maps.Marker({ position: pos,
                                                   map: map,
                                                   title: 'Project ' + aProjects[i].properties['tip_id'],
@@ -278,7 +325,7 @@ function displayProjects(aProjects) {
                 // Set up on-click event handler for the marker
                 google.maps.event.addListener(marker, 'click', function(e) { 
                     var clickLocation = e.latLng; 
-                    var content = this.ctpsProps.projectName + '<br/>' +  this.ctpsProps.town + '<br/>' + this.ctpsProps.projectDetailUrl;
+                    var content = this.ctpsProps.projectName + '<br/>' + this.ctpsProps.town + '<br/>' + this.ctpsProps.projectDetailUrl;
                     if (!infoWindow) {
                         infoWindow = new google.maps.InfoWindow();
                     }
@@ -287,27 +334,24 @@ function displayProjects(aProjects) {
                     infoWindow.open(map);
                 });
                 googleBounds.extend({ lat : tip_spatial_rec.properties['latitude'], lng : tip_spatial_rec.properties['longitude'] });          
-            } // inner if
+            } // inner if: tip_spatial_rec is/isn't undefined
         } else {
             console.log('Project with TIP ID = ' + tip_id + ' has no record in tip_spatial table.');
-        }// outer if
+        }// outer if: projct 'has_geo' 
     } // for over aProjects array
     
+    // Clear out the items currently in the dataView, load it with the new data, and render it in the grid
+    // 
+    var i, tmp, len = dataView.getLength();
+    dataView.beginUpdate();
+    for (i = 0; i < len; i++) {
+        tmp = dataView.getItem(i);
+        dataView.deleteItem(tmp.id);
+    }
+    dataView.endUpdate();
+    dataView.setItems(aData);
     // If the extent has been changed, adjust the map display accordingly
     if (!googleBounds.equals(googleBoundsInit)) {
             map.fitBounds(googleBounds);
     }
-    
-    // Generate the accessible table
-    var colDesc = [ { 'header' : 'TIP ID',       'dataIndex' : 'tip_id'    },
-                    { 'header' : 'Project Name', 'dataIndex' : 'proj_name' },
-                    { 'header' : 'Category',      'dataIndex' : 'proj_cat' },
-                    { 'header' : 'Town',         'dataIndex' : 'town'      } ];
-    var options = { 'div_id'    : 'project_list_contents',
-                    'table_id'  : 'project_list',
-                    'caption'   : 'Table of TIP Projects',
-                    'colDesc'   : colDesc,
-                    'col1th'    : true,
-                    'summary'   : 'Selected TIP Projects' };
-    $('#project_list_contents').accessibleGrid(colDesc, options, aData);                
 } // displayProjects()

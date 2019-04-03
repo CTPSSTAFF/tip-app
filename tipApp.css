@@ -56,8 +56,25 @@
     height: 100%;
     border: 4px solid #B87F32; 
 }
+#legend h2 {
+    font-size: 17px;
+}
+#project_list_caption h2 {
+    font-size: 17px;
+}
+#project_list_contents {
+    min-height: 500px;
+    min-width: 500px;
+}
+.moneyColumn {
+    text-align: right;
+}
 
 #tabs_div {
     width:  100%;
     height: 1000px;
+}
+/* Throttle the jQueryUI font size back a bit */
+.ui-widget {
+    font-size:80% !important;
 }

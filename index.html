@@ -1,14 +1,35 @@
 <!DOCTYPE html>
 <head lang="en">
 <meta charset="utf-8">
-<title>Prototype TIP Application Version 0.01</title>
+<title>Prototype TIP Application  Version 0.02</title>
+
+<link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.min.css"/>
+<link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.structure.min.css"/>
+<link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css"/>
+
+<link rel="stylesheet" href="libs/SlickGrid-2.4.1/slick.grid.css"/>
 <link rel="stylesheet" href="tipApp.css"/>
 <script src="//maps.googleapis.com/maps/api/js?sensor=false&key=AIzaSyBDKncJRheezxvvmheB8JLH4Dk7EHfdZEk"></script>
 <script src="libs/jquery-3.3.1.min.js"></script>
+<script src="libs/jquery.event.drag-2.3.0.js"></script>
+<script src="libs/jquery.event.drop-2.3.0.js"></script>
+
+
+<script src="libs/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+
+
+<script src="libs/SlickGrid-2.4.1/slick.core.js"></script>
+<script src="libs/SlickGrid-2.4.1/slick.grid.js"></script>
+<script src="libs/SlickGrid-2.4.1/slick.dataview.js"></script>
+
 <script src="libs/jquery.accessibleGrid-0.09.js"></script>
 <script src="libs/underscore-min.js"></script>
+
+<!-- We probably won't need the Proj4 and turf libraries... -->
+<!--
 <script src="libs/proj4js-2.5.0/dist/proj4.js"></script>
-<script src="libs/turf.min.js"></script>
+<script src="libs/turf.min.js"></script> 
+-->
 </head>
 <body>
 <div class="ctpsHeader">
@@ -16,20 +37,19 @@
 	<div class="darkBlue"></div>
 	<a href="http://ctps.org/" target="_blank" title="Boston MPO"><img src="./img/ctps_header.png" title="Opens Boston MPO website in a new window" id ="banner" ></a>
 </div>
-<h1 class="pagetitle">Prototype TIP Application Version 0.01</h1>
+<h1 class="pagetitle">Prototype TIP Application Version 0.02</h1>
 <div id="wrapper">
     <div id="legend">
-        <h3>Legend</h3>
+        <h2>Legend</h2>
         <span><img src="img/orange-dot.png">Major highway project</span>
         <br/>        
          <span><img src="img/pink-dot.png">Arterial / Intersection project</span>
         <br/>
         <span><img src="img/blue-dot.png">Bridge project</span>
         <br/>
-        
-        <span><img src="img/green-dot.png">Transit project</span>
-        <br/>
         <span><img src="img/red-dot.png">Bicycle / Pedestrian project</span>
+        <br/>        
+        <span><img src="img/green-dot.png">Transit project</span>
         <br/>
 <!--
         <img src="img/ltblue-dot.png">
