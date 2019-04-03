@@ -448,6 +448,9 @@ function queryProjects(e) {
     // var results = DATA.projects_JOIN;  
     var results = DATA.projects;
     
+    // Restrict app to the current year's TIP, i.e., projects with funding_stat == ‘'FYs 2020-24 TIP Programmed'
+    //  results = _.filter(results, function(proj) { return (proj.properties['funding_stat'] === 'FFYs 2020-24 TIP Programmed'); });
+    
     // 1. Did the search specify a town?
     if (town !== 'All') {
         // Find all the records in the projects table whose 'towns' field CONTAINS the specified town
