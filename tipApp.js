@@ -5,11 +5,11 @@
 // Stuff pertaining to retrieval of data from TIP database, and the data itself:
 //
 var wfsServerRoot = location.protocol + '//' + location.hostname + ':8080/geoserver/wfs';
-var projectsURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_projects_view&outputformat=json'; 
-var proj_townURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_project_town_view&outputformat=json';
-var city_town_lutURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_city_town_lookup&outputformat=json';
-var proj_catURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_lut_proj_cat&outputformat=json';
-var tip_spatialURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=cert_act:tip_spatial_4app&outputformat=json';
+var projectsURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_projects_view&outputformat=json'; 
+var proj_townURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_project_town_view&outputformat=json';
+var city_town_lutURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_city_town_lookup&outputformat=json';
+var proj_catURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_lut_proj_cat&outputformat=json';
+var tip_spatialURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_spatial_4app&outputformat=json';
 
 // The following are pretty much invariant: load these as static, previously-generated GeoJSON files
 var mpo_boundaryURL = 'data/ctps_boston_region_mpo_97_land_arc.geojson';
@@ -109,15 +109,37 @@ $(document).ready(function() {
     // Enable jQueryUI tabs
     // Note that the Google Map is only initialized and rendered
     $('#tabs_div').tabs({
-        activate: function(event, ui) {
-            var _DEBUG_HOOK = 0;
+        heightStyle : 'content',
+        activate    : function(event, ui) {
             if (ui.newTab.index() == 1 && searchTabExposed == false) {
                 initializeMap();
                 searchTabExposed = true;
                 // Per customer request: Query for *all* projects on app startup
                 $('#search_button').trigger('click');
+                // *** Clean up the SlickGrid's header row
+                //     N.B. This is an unabashed hack!
+                //     Also see window.resize() handler, below
+                var sg_colhdrs = $('.ui-state-default.slick-header-column');
+                var i, totalLength = 0;
+                for (i = 0; i < sg_colhdrs.length; i++) {
+                    totalLength += sg_colhdrs[i].clientWidth;
+                }
+               $('div.slick-pane.slick-pane-header.slick-pane-left').width(totalLength);
             }
         }
+    });
+    
+    // *** When the window resizes, resize the header row in the SlickGrid
+    //     N.B. This is an unabashed hack!
+    //     Also see the jQueryUI tabs constructor, abobve
+    $(window).resize(function(e) {
+        grid.resizeCanvas();
+        var sg_colhdrs = $('.ui-state-default.slick-header-column');
+        var i, totalLength = 0;
+        for (i = 0; i < sg_colhdrs.length; i++) {
+            totalLength += sg_colhdrs[i].clientWidth;
+        }
+        $('div.slick-pane.slick-pane-header.slick-pane-left').width(totalLength);      
     });
     
     // Initialize the machinery for the Slick Grid

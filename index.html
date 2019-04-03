@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head lang="en">
 <meta charset="utf-8">
-<title>Prototype TIP Application Version 0.9b</title>
+<title>Prototype TIP Application Version 0.9c</title>
 
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.min.css"/>
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.structure.min.css"/>
@@ -38,7 +38,7 @@
 	<div class="darkBlue"></div>
 	<div id="banner"><a href="http://ctps.org/" target="_blank" title="Boston MPO"><img style="height:59px" src="./img/ctps_header.png" title="Opens Boston MPO website in a new window"></a></div>
 </div>
-<h1 class="pagetitle">Prototype TIP Application Version 0.9b</h1>
+<h1 class="pagetitle">Prototype TIP Application Version 0.9c</h1>
 <div id="wrapper">
     <div class="tabs" id="tabs_div">
         <ul>
@@ -46,8 +46,109 @@
             <li><a href="#search_tab">Search for Projects</a></li>
         </ul>
         <div class="tabbody" id="background_tab">
-            <p>This is the contents of the background tab.</p>
+<!-- The following attempt to include external HTML doesn't quite work ... would have to set the height property manually. (BK 03/11/2019)
+            <div id="include_wrapper">
+                <OBJECT id="included_object" type="text/html" data="./include_file.html" style="width:100%">
+                    Warning: include_file.html could not be included.
+                </OBJECT>
+            </div>
+--> 
+            <!-- "INCLUDED" TEXT BEGINS HERE -->
+            <div id="included_div">
+                <h2>Overview</h2>
+                    <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ac sodales velit.
+                    Quisque vehicula, ante quis blandit sollicitudin, nibh dolor molestie velit, in 
+                    gravida lorem nisi nec magna. Fusce quis neque mollis, auctor mi nec, ultricies 
+                    orci. Duis iaculis eros odio, vel malesuada velit malesuada volutpat. Suspendisse
+                    posuere augue sed orci volutpat, et laoreet mauris tempus. Fusce sit amet erat 
+                    quis metus convallis varius a at dui. Aliquam odio lacus, tincidunt finibus nisl
+                    id, cursus mattis eros. Vivamus rhoncus vestibulum nunc ac viverra. Sed quis 
+                    vehicula eros, eu malesuada magna. Ut gravida nibh sit amet elit auctor euismod.
+                    Fusce sed dictum tellus. Nulla in sapien elit. Ut ultrices dictum magna ut 
+                    eleifend. Phasellus venenatis molestie facilisis. Morbi feugiat neque id erat 
+                    luctus, nec dignissim sem fringilla.
+                    </p>
+                <h2>Process</h2>
+                    <p>
+                    Cras lacinia at nunc vitae fermentum. Ut sapien orci, varius non libero et, 
+                    tempus lacinia tortor. Mauris vitae dui ac justo eleifend consequat ut ac arcu. 
+                    Nulla rhoncus faucibus erat sit amet venenatis. Curabitur commodo pellentesque 
+                    sollicitudin. Morbi dapibus ligula eu efficitur tincidunt. Mauris mollis 
+                    suscipit risus eget elementum. Ut a ante fermentum, gravida purus vitae, 
+                    convallis quam. Curabitur aliquet tellus id orci porta, et bibendum velit 
+                    tincidunt. Quisque posuere non leo non fringilla. Nulla gravida maximus neque, 
+                    in pretium lorem commodo quis. Aenean facilisis quam vel elementum viverra. 
+                    Suspendisse posuere consectetur rutrum. Sed congue facilisis ligula non rhoncus.
+                    </p>
+                    <p>
+                    Duis vulputate felis at finibus lobortis. Praesent sit amet vulputate ante. 
+                    Cras quis nibh dapibus, elementum nisl convallis, ultrices ante. Ut congue sapien
+                    orci, in ornare orci aliquam eu. Vivamus venenatis, diam at dignissim efficitur,
+                    odio leo pulvinar lectus, sit amet luctus enim urna sed massa. Pellentesque 
+                    venenatis feugiat justo. Donec et est gravida, sodales ligula tincidunt, 
+                    suscipit elit. Donec commodo euismod odio, vitae placerat leo sagittis vitae. 
+                    Aliquam id sem vehicula, tempus risus sit amet, venenatis est. Quisque nisl 
+                    tellus, pulvinar id malesuada sed, venenatis id felis. Etiam nec ipsum nec orci 
+                    iaculis pretium at non nulla
+                    </p>
+                <h2>Evaluation Criteria</h2>
+                    <p>
+                    Cras lacinia at nunc vitae fermentum. Ut sapien orci, varius non libero et, 
+                    tempus lacinia tortor. Mauris vitae dui ac justo eleifend consequat ut ac arcu. 
+                    Nulla rhoncus faucibus erat sit amet venenatis. Curabitur commodo pellentesque 
+                    sollicitudin. Morbi dapibus ligula eu efficitur tincidunt. Mauris mollis 
+                    suscipit risus eget elementum. Ut a ante fermentum, gravida purus vitae, 
+                    convallis quam. Curabitur aliquet tellus id orci porta, et bibendum velit 
+                    tincidunt. Quisque posuere non leo non fringilla. Nulla gravida maximus neque, 
+                    in pretium lorem commodo quis. Aenean facilisis quam vel elementum viverra. 
+                    Suspendisse posuere consectetur rutrum. Sed congue facilisis ligula non rhoncus.
+                    </p>  
+                    <p>
+                    Duis vulputate felis at finibus lobortis. Praesent sit amet vulputate ante. 
+                    Cras quis nibh dapibus, elementum nisl convallis, ultrices ante. Ut congue sapien
+                    orci, in ornare orci aliquam eu. Vivamus venenatis, diam at dignissim efficitur,
+                    odio leo pulvinar lectus, sit amet luctus enim urna sed massa. Pellentesque 
+                    venenatis feugiat justo. Donec et est gravida, sodales ligula tincidunt, 
+                    suscipit elit. Donec commodo euismod odio, vitae placerat leo sagittis vitae. 
+                    Aliquam id sem vehicula, tempus risus sit amet, venenatis est. Quisque nisl 
+                    tellus, pulvinar id malesuada sed, venenatis id felis. Etiam nec ipsum nec orci 
+                    iaculis pretium at non nulla
+                    </p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ac sodales velit.
+                    Quisque vehicula, ante quis blandit sollicitudin, nibh dolor molestie velit, in 
+                    gravida lorem nisi nec magna. Fusce quis neque mollis, auctor mi nec, ultricies 
+                    orci. Duis iaculis eros odio, vel malesuada velit malesuada volutpat. Suspendisse
+                    posuere augue sed orci volutpat, et laoreet mauris tempus. Fusce sit amet erat 
+                    quis metus convallis varius a at dui. Aliquam odio lacus, tincidunt finibus nisl
+                    id, cursus mattis eros. Vivamus rhoncus vestibulum nunc ac viverra. Sed quis 
+                    vehicula eros, eu malesuada magna. Ut gravida nibh sit amet elit auctor euismod.
+                    Fusce sed dictum tellus. Nulla in sapien elit. Ut ultrices dictum magna ut 
+                    eleifend. Phasellus venenatis molestie facilisis. Morbi feugiat neque id erat 
+                    luctus, nec dignissim sem fringilla.                
+                <h2>References and Other Resources</h2>
+                <ul>
+                    <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+                    <li>Morbi feugiat augue eget ipsum commodo, at dictum ipsum volutpat.</li>
+                    <li>Aenean consequat lacus nec consectetur convallis.</li>
+                    <li>Pellentesque placerat est ac sem mattis facilisis.</li>
+                    <li>Ut pharetra velit sed velit maximus, et maximus odio venenatis.</li>
+                    <li>Cras elementum est a velit gravida semper.</li>
+                    <li>Quisque eget sem sed enim finibus vehicula eu vitae sapien.</li>
+                    <li>Vestibulum et enim sed ipsum interdum pulvinar vel sed turpis.</li>
+                    <li>Morbi ultrices turpis vitae magna commodo, a tempus velit semper.</li>
+                    <li>Etiam a purus vehicula, hendrerit libero a, viverra nisl.</li>
+                    <li>Nulla eget risus et sapien vestibulum consectetur.</li>
+                    <li>Aliquam tincidunt justo et posuere consectetur.</li>
+                    <li>Integer vel magna molestie dolor interdum interdum.</li>
+                    <li>Nunc blandit felis ultrices mi mattis facilisis.</li>
+                    <li>Fusce in eros mattis, auctor arcu id, bibendum neque.</li>
+                    <li>Integer facilisis ligula ac sollicitudin eleifend.</li>            
+                </ul>
+            <div>
+            <!-- "INCLUDED" TEXT ENDS HERE -->
         </div> <!-- background_tab -->
+        
         <div class=tabbody id="search_tab">
             <div id="map_wrapper">
                 <div id="search_div" role="search">

@@ -131,10 +131,11 @@
     height: fit-content;
 }
 
-
 /* Throttle the jQueryUI font size back a bit */
 .ui-widget {
     font-size:90% !important;
 }
+
+/* The following is an experiment by BK 03/06/2019 */
 
 

@@ -8,28 +8,28 @@ $(document).ready(function() {
     //     tip_projects, bridge_component, project_town, project_proponent, funding, amendment, project_town_list, project_proponent_list
     //  
     var wfsServerRoot = location.protocol + '//' + location.hostname + ':8080/geoserver/wfs';
-    var projectsURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_projects_view&outputformat=json';
-    var eval_criteriaURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_evaluation_criteria&outputformat=json';
-    var bridge_componentURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_bridge_component_view&outputformat=json';
-    var bridge_dataURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_bridge_data&outputformat=json';
-    var proj_townURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_project_town_view&outputformat=json';
-    var proj_proponentURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_project_proponent_view&outputformat=json';
-    var funding_currentURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_funding_current_sum_view&outputformat=json';
-    var funding_proposedURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_funding_proposed_sum_view&outputformat=json';
-    var amendmentURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_project_amendment_view&outputformat=json';
-    var city_town_lutURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_city_town_lookup&outputformat=json';
-    var contactsURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_contacts&outputformat=json';   
-    // var proj_catURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_lut_proj_cat&outputformat=json';
+    var projectsURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_projects_view&outputformat=json';
+    var eval_criteriaURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_evaluation_criteria&outputformat=json';
+    var bridge_componentURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_bridge_component_view&outputformat=json';
+    var bridge_dataURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_bridge_data&outputformat=json';
+    var proj_townURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_project_town_view&outputformat=json';
+    var proj_proponentURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_project_proponent_view&outputformat=json';
+    var funding_currentURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_funding_current_sum_view&outputformat=json';
+    var funding_proposedURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_funding_proposed_sum_view&outputformat=json';
+    var amendmentURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_project_amendment_view&outputformat=json';
+    var city_town_lutURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_city_town_lookup&outputformat=json';
+    var contactsURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_contacts&outputformat=json';   
+    // var proj_catURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_lut_proj_cat&outputformat=json';
         // The following maps the ctps_id of a project to a string containing the names(s) of the towns in which the project is located
-    var project_town_listURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_project_town_list_view&outputformat=json';
+    var project_town_listURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_project_town_list_view&outputformat=json';
         // The following maps the ctps_id of a project to a string contining the name(s) of the project's proponents
-    var project_proponent_listURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_project_proponent_list_view&outputformat=json';
+    var project_proponent_listURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_project_proponent_list_view&outputformat=json';
     
      // Global "database" of JSON returned from WFS requests
     var DATA = {};    
  
     // Enable jQueryUI tabs
-    $('#tabs_div').tabs();
+    $('#tabs_div').tabs({ heightStyle : 'content' });
     
     // Stuff pertaining to the Google Map:
     //
@@ -152,7 +152,7 @@ $(document).ready(function() {
         // If project has geographic feature, display on map
         if (p.properties['has_geo'] === -1) {
             var sQuery = 'cql_filter=tip_id=' + tip_id;
-            var sUrl = wfsServerRoot + '?service=wfs&version=1.1.0&request=getfeature&typename=cert_act:tip_spatial_line_project_4app&srsName=EPSG:4326&outputformat=json&' + sQuery;
+            var sUrl = wfsServerRoot + '?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_spatial_line_project_4app&srsName=EPSG:4326&outputformat=json&' + sQuery;
             $.ajax({ url		:   sUrl,
                      type		:   'GET',
                      dataType	:   'json',
@@ -204,7 +204,7 @@ $(document).ready(function() {
                                         map.fitBounds(googleBounds);
                                     }, // success handler
                      error		: 	function (qXHR, textStatus, errorThrown ) {
-                                        alert('WFS request for data from cert_act:tip_spatial_line_project_4app failed.\n' + 'Status: ' + textStatus + '\n' + 'Error:  ' + errorThrown);
+                                        alert('WFS request for data from tip_viewer:tip_spatial_line_project_4app failed.\n' + 'Status: ' + textStatus + '\n' + 'Error:  ' + errorThrown);
                                     } // error handler
             }); // $.ajax call - WFS request
         } // if (p.properties['has_geo'] === -1)     
