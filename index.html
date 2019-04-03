@@ -10,7 +10,10 @@
 <link rel="stylesheet" href="tipApp.css"/>
 
 <script src="https://maps.googleapis.com/maps/api/js?sensor=false&key=AIzaSyBDKncJRheezxvvmheB8JLH4Dk7EHfdZEk"></script>
-<script src="libs/jquery-3.3.1.min.js"></script>
+<!-- <script src="libs/jquery-3.3.1.min.js"></script> -->
+<!-- <script src="libs/jquery-3.3.1.js"></script> -->
+<!-- <script src="libs/jquery-2.2.4.min.js"></script> -->
+<script src="libs/jquery-2.2.4.js"></script>
 <!-- The following two libs are required by Slick Grid -->
 <script src="libs/jquery.event.drag-2.3.0.js"></script>
 <script src="libs/jquery.event.drop-2.3.0.js"></script>
@@ -154,7 +157,7 @@
             <label for="select_tip_id">TIP ID:</label>
             <select id="select_tip_id">
             </select>
-            <input type="button" id="searchButton" value="Search" />
+            <input type="button" id="search_button" value="Search" />
             <a id="skip_forward_link" href="#skip_backward_link" class="element-invisible">Skip over Google Map to search results.</a>
         </div> <!-- search_div -->  
         <div id="map" role="presentation">
@@ -168,10 +171,15 @@
                 <img src="img/red-dot.png">Bicycle / Pedestrian project&nbsp;&nbsp;
                 <img src="img/green-dot.png">Transit project&nbsp;&nbsp;
             </span>
+            <br/>
+            <span>
+                <svg id="legend_svg_1" class="legend_svg"><line id="svg_line_in_legend_1" x1="0" y1="50" x2="100" y2="50" stroke="#00a674" stroke-width="8"></line></svg>&nbsp;&nbsp;Boston Region MPO Boundary&nbsp;&nbsp;
+                <svg id="legend_svg_2" class="legend_svg"><line id="svg_line_in_legend_2" x1="0" y1="50" x2="100" y2="50" stroke="brown" stroke-width="1.5"></line></svg>&nbsp;&nbsp;MAPC Subregion Boundary&nbsp;&nbsp;
+            </span>
         </div>  
         <a id="skip_backward_link" href="#skip_forward_link" class="element-invisible">Skip back over Google Map</a>
         <h2 class="project_list_caption">Search Results</h2>  
-        <input type="button" id="downloadButton" value="Download search results" />
+        <input type="button" id="download_button" value="Download search results" />
         <div id="project_list_div">
             <div id="project_list_contents_accessible"  class="element-invisible">
             </div> <!-- project_list_contents_accessible -->
