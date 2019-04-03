@@ -38,18 +38,24 @@
     height: 600px;
 }
 #legend {
+/*
     width: 15%;
     height: 95%;
     float: left;
     margin-top: 60px;
+*/
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 #map_wrapper {
-    width: 85%;
+    margin-left: 5%;
+    margin-right: 5%;
+    /* width: 90%; */
     height: 100%;
-    float: right;
+    /* float: right; */
 }
 #search_div {
-    margin-bottom: 10px;
+    /* margin-bottom: 10px; */
     height: 45px;
 }
 #map {
@@ -62,9 +68,12 @@
 #project_list_caption h2 {
     font-size: 17px;
 }
+#project_list_div {
+    margin-bottom: 20px;
+}
 #project_list_contents {
-    min-height: 500px;
-    min-width: 500px;
+    min-height: 200px;
+    min-width:  500px;
 }
 .moneyColumn {
     text-align: right;

@@ -1,25 +1,31 @@
 <!DOCTYPE html>
 <head lang="en">
 <meta charset="utf-8">
-<title>Prototype TIP Project Detail Page Version 0.02</title>
+<title>Prototype TIP Project Detail Page Version 0.03</title>
 <link rel="stylesheet" href="tipDetail.css"/>
-<!--
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.min.css"/>
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.structure.min.css"/>
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css"/>
--->
 <!-- The following line is needed for the Accessible Tabs package. -->
-<script type="text/javascript">document.documentElement.className += " js";</script>
-<link rel="stylesheet" href="libs/accessibleTabs-11Oct2016/slidingdoors/simple-sliding-doors.css" type="text/css" media="screen">
-<script src="//maps.googleapis.com/maps/api/js?sensor=false&key=AIzaSyBDKncJRheezxvvmheB8JLH4Dk7EHfdZEk"></script>
-<script src="libs/jquery-3.3.1.min.js"> </script>
 <!--
-<script src="libs/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+<script type="text/javascript">document.documentElement.className += " js";</script>
+<!--
+<link rel="stylesheet" href="libs/accessibleTabs-11Oct2016/slidingdoors/simple-sliding-doors.css" type="text/css" media="screen">
 -->
+<link rel="stylesheet" href="tipDetail.css"/>
+
+<script src="https://maps.googleapis.com/maps/api/js?sensor=false&key=AIzaSyBDKncJRheezxvvmheB8JLH4Dk7EHfdZEk"></script>
+<script src="libs/jquery-3.3.1.min.js"> </script>
+<script src="libs/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+<!--
 <script src="libs/accessibleTabs-11Oct2016/js/jquery.tabs.min.js"></script>
 <script src="libs/jquery.accessibleGrid-0.09.js"></script>
+-->
 <script src="libs/underscore-min.js"></script>
+<!-- We probably won't need the Proj4 library... -->
+<!--
 <script src="libs/proj4js-2.5.0/dist/proj4.js"></script>
+-->
 <script src="libs/turf.min.js"></script>
 </head>
 <body>
@@ -28,17 +34,23 @@
 	<div class="darkBlue"></div>
 	<a href="http://ctps.org/" target="_blank" title="Boston MPO"><img src="./img/ctps_header.png" title="Opens Boston MPO website in a new window" id ="banner" ></a>
 </div>
-<h1 class="pagetitle">Prototype TIP Project Detail Page Version 0.02</h1>
+<h1 class="pagetitle">Prototype TIP Project Detail Page Version 0.03</h1>
 <div id="wrapper">
-    <div id="legend">
-    </div>
     <div id="map_wrapper">
+        <h2 id="project_detail_header"></h2>
         <div id="map">
         </div>
         <div id="project_detail_div">
-            <h2 id="project_detail_header"></div>
             <div class="tabs" id="tabs_div">
-                <h2>Overview</h2>
+                <ul>
+                    <li><a href="#proj_overview">Overview</a></li>
+                    <li><a href="#proj_safety">Safety</a></li>
+                    <li><a href="#proj_sys_preservation">System Preservation</a></li>
+                    <li><a href="#proj_capacity_mgt">Capacity Management</a></li>
+                    <li><a href="#proj_clean">Clean Air / Clean Communities</a></li>
+                    <li><a href="#proj_tequity">Transportation Equity</a></li>
+                    <li><a href="#proj_economic">Economic Vitality</a></li>
+                </ul>
                 <div class="tabbody" id="proj_overview">
                     <table>
                         <tr>
@@ -157,11 +169,8 @@
                             <td id="mun_priority" class="proj_data"></td>
                         </tr> 
                         <!-- first_tier_list -->
-                        
                     </table>
                 </div> <!-- proj_overview -->
-                
-                <h2>Safety</h2>
                 <div class="tabbody" id="proj_safety">
                     <table>
                         <tr>
@@ -375,8 +384,6 @@
                         </tr>                      
                     </table>
                 </div> <!-- proj_safety -->
-                
-                <h2>System Preservation</h2>
                 <div class="tabbody" id="proj_sys_preservation">
                     <table>
                         <tr>
@@ -544,9 +551,7 @@
                             <td id="overall_sys_pres_score" class="proj_data"></td>
                         </tr>                          
                     </table>    
-                </div> <!-- proj_sys_preservation -->
-                
-                <h2>Capacity Management</h2>
+                </div> <!-- proj_sys_preservation -->           
                 <div class="tabbody" id="proj_capacity_mgt">
                     <table>
                         <tr>
@@ -674,9 +679,7 @@
                             <td id="overall_cp_mgmt_score" class="proj_data"></td> 
                         </tr>
                     </table>  
-                </div> <!-- proj_capacity_mgt --> 
-                
-                <h2>Clean Air / Clean Communities</h2>
+                </div> <!-- proj_capacity_mgt -->           
                 <div class="tabbody" id="proj_clean">
                     <table>
                         <tr>
@@ -744,9 +747,7 @@
                             <td id="overall_cln_air_score" class="proj_data"></td>                         
                         </tr>
                     </table>
-                </div> <!-- proj_clean -->
-                
-                <h2>Transportation Equity</h2>
+                </div> <!-- proj_clean -->        
                 <div class="tabbody" id="proj_tequity">
                     <table>
                         <tr>
@@ -858,9 +859,7 @@
                             <td id="overall_equity_score" class="proj_data"></td>                           
                         </tr>                        
                     </table>
-                </div> <!-- proj_tequity -->
-
-                <h2>Economic Vitality</h2>
+                </div> <!-- proj_tequity -->          
                 <div class="tabbody" id="proj_economic">
                     <table>
                         <tr>
