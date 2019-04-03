@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<head lang="en">
+<meta charset="utf-8">
+<title>Prototype TIP Application Version 0.01</title>
+<link rel="stylesheet" href="tipApp.css"/>
+<script src="//maps.googleapis.com/maps/api/js?sensor=false&key=AIzaSyBDKncJRheezxvvmheB8JLH4Dk7EHfdZEk"></script>
+<script src="libs/jquery-3.3.1.min.js"></script>
+<script src="libs/jquery.accessibleGrid-0.09.js"></script>
+<script src="libs/underscore-min.js"></script>
+<script src="libs/proj4js-2.5.0/dist/proj4.js"></script>
+<script src="libs/turf.min.js"></script>
+</head>
+<body>
+<div class="ctpsHeader">
+	<div class="lightBlue"></div>
+	<div class="darkBlue"></div>
+	<a href="http://ctps.org/" target="_blank" title="Boston MPO"><img src="./img/ctps_header.png" title="Opens Boston MPO website in a new window" id ="banner" ></a>
+</div>
+<h1 class="pagetitle">Prototype TIP Application Version 0.01</h1>
+<div id="wrapper">
+    <div id="legend">
+        <h3>Legend</h3>
+        <span><img src="img/orange-dot.png">Major highway project</span>
+        <br/>        
+         <span><img src="img/pink-dot.png">Arterial / Intersection project</span>
+        <br/>
+        <span><img src="img/blue-dot.png">Bridge project</span>
+        <br/>
+        
+        <span><img src="img/green-dot.png">Transit project</span>
+        <br/>
+        <span><img src="img/red-dot.png">Bicycle / Pedestrian project</span>
+        <br/>
+<!--
+        <img src="img/ltblue-dot.png">
+        <br/>    
+        <img src="img/purple-dot.png">
+        <br/>        
+        <img src="img/yellow-dot.png">
+        <br/>    
+-->
+    </div>
+    <div id="map_wrapper">
+        <div id="search_div">
+            <label>Search for projects</label>
+            <br/>
+            <label>Municipality:</label>
+            <select id="select_town">
+                <option value="0">All</option>
+                <option value="2">Acton</option> 
+                <option value="10">Arlington</option>
+                <option value="14">Ashland</option>
+                <option value="23">Bedford</option> 
+                <option value="25">Bellingham</option> 
+                <option value="26">Belmont</option> 
+                <option value="30">Beverly</option> 
+                <option value="34">Bolton</option>
+                <option value="35">Boston</option>
+                <option value="37">Boxborough</option> 
+                <option value="40">Braintree</option> 
+                <option value="46">Brookline</option> 
+                <option value="48">Burlington</option>
+                <option value="49">Cambridge</option> 
+                <option value="50">Canton</option> 
+                <option value="51">Carlisle</option> 
+                <option value="57">Chelsea</option> 
+                <option value="65">Cohasset</option>
+                <option value="67">Concord</option>
+                <option value="71">Danvers</option> 
+                <option value="73">Dedham</option> 
+                <option value="78">Dover</option> 
+                <option value="92">Essex</option> 
+                <option value="93">Everett</option>
+                <option value="99">Foxborough</option> 
+                <option value="100">Framingham</option> 
+                <option value="101">Franklin</option>
+                <option value="107">Gloucester</option>
+                <option value="119">Hamilton</option> 
+                <option value="131">Hingham</option> 
+                <option value="133">Holbrook</option> 
+                <option value="136">Holliston</option>
+                <option value="139">Hopkinton</option> 
+                <option value="141">Hudson</option> 
+                <option value="142">Hull</option>
+                <option value="144">Ipswich</option>
+                <option value="155">Lexington</option>
+                <option value="157">Lincoln</option>
+                <option value="158">Littleton</option>
+                <option value="163">Lynn</option>
+                <option value="164">Lynnfield</option>
+                <option value="165">Malden</option>
+                <option value="166">Manchester-by-the-Sea</option>
+                <option value="168">Marblehead</option>
+                <option value="170">Marlborough</option>
+                <option value="171">Marshfield</option>
+                <option value="174">Maynard</option>
+                <option value="175">Medfield</option>
+                <option value="176">Medford</option>
+                <option value="177">Medway</option>
+                <option value="178">Melrose</option>
+                <option value="184">Middleton</option>
+                <option value="185">Milford</option>
+                <option value="187">Millis</option>
+                <option value="189">Milton</option>
+                <option value="196">Nahant</option> 
+                <option value="198">Natick</option>
+                <option value="199">Needham</option>
+                <option value="207">Newton</option>
+                <option value="208">Norfolk</option>
+                <option value="213">North Reading</option>
+                <option value="219">Norwell</option>
+                <option value="220">Norwood</option>
+                <option value="229">Peabody</option>
+                <option value="243">Quincy</option>
+                <option value="244">Randolph</option> 
+                <option value="246">Reading</option> 
+                <option value="248">Revere</option> 
+                <option value="251">Rockland</option> 
+                <option value="252">Rockport</option>
+                <option value="258">Salem</option>
+                <option value="262">Saugus</option> 
+                <option value="264">Scituate</option> 
+                <option value="266">Sharon</option> 
+                <option value="269">Sherborn</option>
+                <option value="274">Somerville</option>
+                <option value="277">Southborough</option>
+                <option value="284">Stoneham</option>
+                <option value="286">Stow</option>
+                <option value="288">Sudbury</option>
+                <option value="291">Swampscott</option>
+                <option value="298">Topsfield</option>
+                <option value="305">Wakefield</option> 
+                <option value="307">Walpole</option>
+                <option value="308">Waltham</option>
+                <option value="314">Watertown</option>
+                <option value="315">Wayland</option>
+                <option value="317">Wellesley</option>
+                <option value="320">Wenham</option>
+                <option value="333">Weston</option>
+                <option value="335">Westwood</option>
+                <option value="336">Weymouth</option>
+                <option value="342">Wilmington</option>
+                <option value="344">Winchester</option>
+                <option value="346">Winthrop</option>
+                <option value="347">Woburn</option>
+                <option value="350">Wrentham</option>  
+            </select>
+            <!--- <option>s for this <select> populated in init code. --->
+            <label>Project type:</label>
+            <select id="select_proj_category">
+            </select>
+            <!--- <option>s for this <select> populated in init code. --->
+            <label>TIP ID:</label>
+            <select id="select_tip_id">
+            </select>
+            <input type="button" id="searchButton" value="Search" />
+        </div> <!-- search_div -->   
+        <div id="map">
+        </div>
+        <div id="project_list_div">
+            <div id="project_list_caption">
+                <h2>Search Results</h2>
+            </div>
+            <div id="project_list_contents">
+            </div>  <!-- project_list_contents -->
+        </div> <!-- project_list_div -->
+    </div> <!-- map_wrapper -->
+</div> <!-- wrapper --> 
+<script src="tipApp.js"></script>
+</body>
+</html>
