@@ -65,6 +65,20 @@ $(document).ready(function() {
     // Slick Grid 'dataView' object
     var dataView = null;    
     
+    // Stuff for accessible grid
+    var accColDesc = [  { header : 'TIP ID',                  dataIndex : 'tip_id',   },
+                        { header : 'Project Name',            dataIndex : 'proj_name' },
+                        { header : 'Category',                dataIndex : 'proj_cat' },
+                        { header : 'Municipality',            dataIndex : 'town' },
+                        { header : 'Current Cost Estimate',   dataIndex : 'cur_cost_est',   cls : 'moneyColumn', renderer : moneyFormatter },
+                        { header : 'Amount Programmed',       dataIndex : 'amt_programmed', cls : 'moneyColumn', renderer : moneyFormatter } ];
+    var accGridOptions = { div_id    : 'project_list_contents_accessible',
+                           table_id  : 'project_list_accessible',
+                           caption   : 'Table of TIP Projects',
+                           colDesc   : accColDesc,
+                           col1th    : true,
+                           summary   : 'Selected TIP Projects' };
+    
     // Initialize the Google Map
     //
     var regionCenterLat = 42.345111165; 
@@ -354,10 +368,15 @@ $(document).ready(function() {
         }
         dataView.endUpdate();
         dataView.setItems(aData);
+        
         // If the extent has been changed, adjust the map display accordingly
         if (!googleBounds.equals(googleBoundsInit)) {
-                map.fitBounds(googleBounds);
+            map.fitBounds(googleBounds);
         }
+        
+        // Render the data in aData in an accessible grid
+        $('#project_list_contents_accessible').accessibleGrid(accColDesc, accGridOptions, aData);         
+       
         // Lastly, if the search returned no results, inform the user
         if (aData.length === 0) {
             alert('The search found no projects.');

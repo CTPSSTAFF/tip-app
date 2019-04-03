@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head lang="en">
 <meta charset="utf-8">
-<title>Prototype TIP Application Version 0.03</title>
+<title>Prototype TIP Application Version 0.4</title>
 
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.min.css"/>
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.structure.min.css"/>
@@ -18,9 +18,9 @@
 <script src="libs/SlickGrid-2.4.1/slick.core.js"></script>
 <script src="libs/SlickGrid-2.4.1/slick.grid.js"></script>
 <script src="libs/SlickGrid-2.4.1/slick.dataview.js"></script>
-<!-- <script src="libs/jquery.accessibleGrid-0.09.js"></script> -->
+<script src="libs/jquery.accessibleGrid-0.10.js"></script>
 <script src="libs/underscore-min.js"></script>
-<!-- We probably won't need the Proj4 and turf libraries... -->
+<!-- We probably won't need the Proj4 and turf libraries in the query page... -->
 <!--
 <script src="libs/proj4js-2.5.0/dist/proj4.js"></script>
 <script src="libs/turf.min.js"></script> 
@@ -32,31 +32,10 @@
 	<div class="darkBlue"></div>
 	<a href="http://ctps.org/" target="_blank" title="Boston MPO"><img src="./img/ctps_header.png" title="Opens Boston MPO website in a new window" id ="banner" ></a>
 </div>
-<h1 class="pagetitle">Prototype TIP Application Version 0.03</h1>
+<h1 class="pagetitle">Prototype TIP Application Version 0.4</h1>
 <div id="wrapper">
-<!--
-    <div id="legend">
-        <h2>Legend</h2>
-        <span><img src="img/orange-dot.png">Major highway project</span>
-        <br/>        
-         <span><img src="img/pink-dot.png">Arterial / Intersection project</span>
-        <br/>
-        <span><img src="img/blue-dot.png">Bridge project</span>
-        <br/>
-        <span><img src="img/red-dot.png">Bicycle / Pedestrian project</span>
-        <br/>        
-        <span><img src="img/green-dot.png">Transit project</span>
-        <br/>
-        <img src="img/ltblue-dot.png">
-        <br/>    
-        <img src="img/purple-dot.png">
-        <br/>        
-        <img src="img/yellow-dot.png">
-        <br/>    
-    </div>
--->
     <div id="map_wrapper">
-        <div id="search_div">
+        <div id="search_div" role="search">
             <strong>Search for projects:&nbsp;&nbsp;</strong>
             <label>Municipality:</label>
             <select id="select_town">
@@ -159,20 +138,21 @@
                 <option value="347">Woburn</option>
                 <option value="350">Wrentham</option>  
             </select>
-            <!--- <option>s for this <select> populated in init code. --->
+            <!--- <option>s for the following <select> populated in init code. --->
             <label>Project type:</label>
             <select id="select_proj_category">
             </select>
-            <!--- <option>s for this <select> populated in init code. --->
+            <!--- <option>s for the following <select> populated in init code. --->
             <label>TIP ID:</label>
             <select id="select_tip_id">
             </select>
             <input type="button" id="searchButton" value="Search" />
+            <a href="#project_list_contents_accessible" class="element-invisible">Skip to search results</a>
         </div> <!-- search_div -->  
 
-        <div id="map">
+        <div id="map" role="presentation">
         </div>
-        <div id="legend">
+        <div id="legend" role="presentation">
             <span>
                 <strong>Legend</strong>
                 <img src="img/orange-dot.png">Major highway project&nbsp;&nbsp;
@@ -181,12 +161,13 @@
                 <img src="img/red-dot.png">Bicycle / Pedestrian project&nbsp;&nbsp;
                 <img src="img/green-dot.png">Transit project&nbsp;&nbsp;
             </span>
-        </div>        
+        </div>  
+        <h2 class="project_list_caption">Search Results</h2>      
         <div id="project_list_div">
-            <div id="project_list_caption">
-                <h2>Search Results</h2>
-            </div>
-            <div id="project_list_contents">
+            <div id="project_list_contents_accessible"  class="element-invisible" role="grid">
+            </div> <!-- project_list_contents_accessible -->
+            <a href="#search_div" class="element-invisible">Back to search-for-projects form</a>
+            <div id="project_list_contents" role="presentation">
             </div>  <!-- project_list_contents -->
         </div> <!-- project_list_div -->
     </div> <!-- map_wrapper -->

@@ -1,7 +1,7 @@
 * {
 	font-family:"Trebuchet MS","sans-serif";
 }
-/* Stuff for "branding" */
+/* Rules for "branding" */
 #banner{
 	position:relative;
 	height:100%;
@@ -31,7 +31,21 @@
 	background-color:rgb(13,72,127);
 	z-index:10;
 }
-/* End of stuff for "branding" */
+/* End of rules for "branding" */
+
+/* The following two rules are for the hidden "skip links" */
+.element-invisible {
+    position: absolute !important;
+    clip: rect(1px,1px,1px,1px);
+    overflow: hidden;
+    height: 1px;
+}
+.element-invisible:focus {
+    position: static !important;
+    clip: auto;
+    overflow: visible;
+    height: auto;
+}
 
 #wrapper {
     width: 100%;
@@ -65,8 +79,13 @@
 #legend h2 {
     font-size: 17px;
 }
+/*
 #project_list_caption h2 {
     font-size: 17px;
+}
+*/
+.project_list_caption {
+     font-size: 17px;
 }
 #project_list_div {
     margin-bottom: 20px;
