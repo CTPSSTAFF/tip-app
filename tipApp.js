@@ -210,6 +210,25 @@ $(document).ready(function() {
             oSelect.options.add(oOption);            
         }
 */
+  
+        // Populate the <select> box for town
+        oSelect = document.getElementById("select_town");
+        oOption = document.createElement("OPTION");
+        oOption.text = "All";
+        oOption.value = 0;       
+        oSelect.options.add(oOption);
+        // Get list of towns that actually have one or more projects in the database
+        var tid_list = _.map(DATA.proj_town, function(pt) { return pt.properties.town_id; } );
+        tid_list = _.uniq(tid_list);
+        tid_list.sort(function(a,b) { return +a - +b; });
+        tid_list.forEach(function(town_id) {
+            var tmp = _.find(DATA.city_town_lut, function(rec) { return rec.id == 'tip_city_town_lookup.' + town_id; });
+            oOption = document.createElement("OPTION");
+            oOption.value = town_id;
+            oOption.text =  tmp.properties['town_name'];
+            oSelect.options.add(oOption);
+        });
+         
         
         // Populate the <select> box for project category
         // Read the LUT of project categories in order to do so
@@ -252,7 +271,9 @@ $(document).ready(function() {
         $('#download_button').hide();
   
         // Arm on-click event handler for the 'Search' button
-        $('#search_button').click(queryProjects);         
+        $('#search_button').click(queryProjects);  
+        // And, per customer request query for all projects on app startup
+        $('#search_button').trigger('click');
     }); // handler for 'when loading of data is done' event
 });	// $(document).ready event handler
 
@@ -420,7 +441,7 @@ function displayProjects(aProjects) {
                 var ctpsProps = {};
                 ctpsProps.projectDetailUrl = sUrl;
                 ctpsProps.projectName = aProjects[i].properties['proj_name'];
-                ctpsProps.town = aProjects[i].properties['town'];
+                ctpsProps.town = aProjects[i].properties['towns'];
                 marker.ctpsProps = ctpsProps;  
                 aMarkers.push(marker);
                 // Set up on-click event handler for the marker
