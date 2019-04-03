@@ -14,7 +14,8 @@ $(document).ready(function() {
     var bridge_dataURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_bridge_data&outputformat=json';
     var proj_townURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_project_town_view&outputformat=json';
     var proj_proponentURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_project_proponent_view&outputformat=json';
-    var fundingURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_funding_view&outputformat=json';
+    var funding_currentURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_funding_current_sum_view&outputformat=json';
+    var funding_proposedURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_funding_proposed_sum_view&outputformat=json';
     var amendmentURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_project_amendment_view&outputformat=json';
     var city_town_lutURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_city_town_lookup&outputformat=json';
     var contactsURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_tabular:tip_contacts&outputformat=json';   
@@ -90,7 +91,8 @@ $(document).ready(function() {
            getJson(bridge_dataURL), 
            getJson(proj_townURL), 
            getJson(proj_proponentURL),
-           getJson(fundingURL), 
+           getJson(funding_currentURL), 
+           getJson(funding_proposedURL),
            getJson(amendmentURL), 
            getJson(city_town_lutURL), 
            getJson(contactsURL),
@@ -102,7 +104,8 @@ $(document).ready(function() {
                     bridge_data, 
                     proj_town, 
                     proj_proponent, 
-                    funding, 
+                    funding_current, 
+                    funding_proposed,
                     amendment, 
                     city_town_lut,
                     contacts,  
@@ -119,7 +122,10 @@ $(document).ready(function() {
         DATA.bridge_data = bridge_data[0].features;
         DATA.proj_town = proj_town[0].features;
         DATA.proj_proponent = proj_proponent[0].features;
-        DATA.funding = funding[0].features;
+  
+        DATA.funding_current = funding_current[0].features;
+        DATA.funding_proposed = funding_proposed[0].features;
+        
         DATA.amendment = amendment[0].features;
         DATA.city_town_lut = city_town_lut[0].features;
         DATA.contacts = contacts[0].features;
@@ -210,7 +216,7 @@ $(document).ready(function() {
         // We can now grab this info directly from the tip_projects table 'view'
         $('#muni_or_munis').html(tipCommon.cleanupFunkyString(p.properties['towns']));
        
-/*
+/******
         var ctps_id, munis, town_id, town_rec, town_name, munis_rec, munis_str;
         ctps_id = p.properties['ctps_id'];
         munis = _.filter(DATA.proj_town, function(proj) { return proj.properties['ctps_id'] === ctps_id; });
@@ -229,14 +235,30 @@ $(document).ready(function() {
             }
             $('#muni_or_munis').html(munis_str);
         }
-*/
+*****/
+
         // Subregion OR Subregions - summary line
         // Again, this information is now collected in the tip_projects table 'view'
-        $('#subregion_or_subregions').html(tipCommon.cleanupFunkyString(p.properties['subregions']));
+        // But we have to cleanup potential 'dupes' (hence the call to cleanupFunkyString)... 
+        // AND 'translate' subregion abbreviations to their full-length form
+        tmp = tipCommon.cleanupFunkyString(p.properties['subregions']);
+        for (i = 0; i < tmp.length; i++) {
+            tmp[i] = tmp[i].replace('ICC', 'Inner Core Committee');
+            tmp[i] = tmp[i].replace('MAGIC', 'Minuteman Advisory Group on Interlocal Coordination');
+            tmp[i] = tmp[i].replace('METROWEST', 'Metrowest Regional Collaborative');
+            tmp[i] = tmp[i].replace('NSPC', 'North Suburban Planning Council');
+            tmp[i] = tmp[i].replace('NSTF', 'North Shore Task Force');
+            tmp[i] = tmp[i].replace('SSC', 'South Shore Coalition');
+            tmp[i] = tmp[i].replace('SWAP', 'Southwest Area Plannning Committee');
+            tmp[i] = tmp[i].replace('TRIC', 'Three Rivers Interlocal Council');
+        }
+        $('#subregion_or_subregions').html(tmp);
+        
         // Proponent OR Proponents - summary line
         // We can now grab this info directly from the tip_projects table 'view'
         $('#proponent_or_proponents').html(tipCommon.cleanupFunkyString(p.properties['proponents']));
-/*
+        
+/*****
         // Note: Project 'proponents' are listed in the city_town_lookup table.
         //       'Proponents' include cities/towns AND a few other entitles, e.g., MassDOT, 
         //       the MBTA, etc., each of which is given a 'town_id' (yeech!) as a unique identifier.
@@ -257,7 +279,8 @@ $(document).ready(function() {
             }
             $('#proponent_or_proponents').html(props_str);
         }   
-*/        
+*****/        
+
         $('#stip_prog').html(p.properties['stip_proj']);
         $('#proj_len').html(p.properties['proj_len']);
         $('#exist_lane_mi').html(p.properties['exist_lane_mi']);
@@ -303,14 +326,14 @@ $(document).ready(function() {
                 for (j = 0; j < contacts.length; j++) {
                     nameStr = '';
                     infoStr = '';
-                    contact = contacts[i];
+                    contact = contacts[j];
                     nameStr += contact.properties['contact_first_name'] + ' ' + contact.properties['contact_last_name'] + '<br/>';
                     nameStr += contact.properties['contact_position'] + '<br/>';
                     nameStr += contact.properties['contact_organization'];
                     infoStr += contact.properties['contact_address1'] + '<br/>';
                     infoStr += (contact.properties['contact_address2'] != null) ? contact.properties['contact_address2'] + '<br/>' : '';
-                    infoStr += contact.properties['contact_address_city'] + '<br/>';
-                    infoStr += contact.properties['contact_address_state'] + '<br/>'; // Wouldn't this aways be 'MA'???
+                    infoStr += contact.properties['contact_address_city'] + ', ';
+                    infoStr += contact.properties['contact_address_state'] + ' '; // Wouldn't this aways be 'MA'???
                     infoStr += contact.properties['contact_address_zip'] + '<br/>';
                     infoStr += contact.properties['contact_telephone'] + '<br/>';
                     infoStr += contact.properties['contact_email'];
@@ -321,7 +344,6 @@ $(document).ready(function() {
             }
             $('#proponents_table > tbody').html(htmlStr);
         }
-        var _DEBUG_HOOK_ = 0;
         
         // Prep for retreiving project evaluation criteria
         //
@@ -562,5 +584,94 @@ $(document).ready(function() {
         $('#lev_othr_invest_score').html(ec.properties['lev_othr_invest_score']);
         $('#overall_econ_vital_score').html(ec.properties['#overall_econ_vital_score']);
         $('#overall_eval_score').html(ec.properties['overall_eval_score']);
+        
+        // Funding information
+        // -1 is used as indicator of TRUE in DB records, per MS Access (Yeech) standards
+        var has_cur_funding = p.properties['in_tip_current'] == -1;
+        var has_prop_funding = p.properties['in_tip_proposed'] == -1;
+        
+        var cur_funding =  _.filter(DATA.funding_current, function(rec) { return rec.properties['ctps_id'] == p.properties['ctps_id']; });
+        var prop_funding = _.filter(DATA.funding_proposed, function(rec) { return rec.properties['ctps_id'] == p.properties['ctps_id']; });
+        // The results of the 2 _.filter operations above will contain 3 records:
+        // record 0 - for Federal funds
+        // record 1 - for Non-Federal funds
+        // record 2 - total
+        var fed_ix = 0; nonfed_ix = 1, total_ix = 2;
+        var headerLine, fedLine, nonFedLine, totalLine, htmlStr;
+        
+        // Current funding
+        if (has_cur_funding == true) {
+            headerLine = '<thead><tr><td></td>' +
+                                     '<td class="columnHeader">FY 2019</td>' +
+                                     '<td class="columnHeader">FY 2020</td>' +
+                                     '<td class="columnHeader">FY 2021</td>' +
+                                     '<td class="columnHeader">FY 2022</td>' +
+                                     '<td class="columnHeader">FY 2023</td>' +
+                                '</tr>' +
+                          '</thead>';
+            fedLine = '<tr><td>Federal Funds</td>' +
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[fed_ix].properties['fy2019']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[fed_ix].properties['fy2020']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[fed_ix].properties['fy2021']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[fed_ix].properties['fy2022']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[fed_ix].properties['fy2023']) + '</td>' + 
+                       '</tr>';
+            nonFedLine = '<tr><td>Non-federal Funds</td>' +
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[nonfed_ix].properties['fy2019']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[nonfed_ix].properties['fy2020']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[nonfed_ix].properties['fy2021']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[nonfed_ix].properties['fy2022']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[nonfed_ix].properties['fy2023']) + '</td>' + 
+                       '</tr>';
+            totalLine = '<tr><td>Totall Funds</td>' +
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[total_ix].properties['fy2019']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[total_ix].properties['fy2020']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[total_ix].properties['fy2021']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[total_ix].properties['fy2022']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(cur_funding[total_ix].properties['fy2023']) + '</td>' + 
+                       '</tr>';
+            htmlStr = headerLine + '<tbody>' + fedLine + nonFedLine + totalLine + '</tbody>';           
+            $('#current_funding_table').html(htmlStr);
+            $('#current_funding').show();
+        } else {
+            $('#current_funding').hide();
+        }
+        
+        // Proposed funding
+        if (has_prop_funding == true) {
+            headerLine = '<thead><tr><td></td><td class="columnHeader">FY 2019</td>' +
+                                             '<td class="columnHeader">FY 2020</td>' +
+                                             '<td class="columnHeader">FY 2021</td>' +
+                                             '<td class="columnHeader">FY 2022</td>' +
+                                             '<td class="columnHeader">FY 2023</td>' +
+                                '</tr>' +
+                          '</thead>';
+            fedLine = '<tr><td>Federal Funds</td>' +
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[fed_ix].properties['fy2019']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[fed_ix].properties['fy2020']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[fed_ix].properties['fy2021']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[fed_ix].properties['fy2022']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[fed_ix].properties['fy2023']) + '</td>' + 
+                       '</tr>';
+            nonFedLine = '<tr><td>Non-federal Funds</td>' +
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[nonfed_ix].properties['fy2019']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[nonfed_ix].properties['fy2020']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[nonfed_ix].properties['fy2021']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[nonfed_ix].properties['fy2022']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[nonfed_ix].properties['fy2023']) + '</td>' + 
+                       '</tr>';
+            totalLine = '<tr><td>Federal Funds</td>' +
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[total_ix].properties['fy2019']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[total_ix].properties['fy2020']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[total_ix].properties['fy2021']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[total_ix].properties['fy2022']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[total_ix].properties['fy2023']) + '</td>' + 
+                       '</tr>';
+            htmlStr = headerLine + '<tbody>' + fedLine + nonFedLine + totalLine + '</tbody>';             
+            $('#proposed_funding').show();
+        } else {
+            $('#proposed_funding').hide();
+        }       
+        
     } // displayTabularData()
 });	 // $(document).ready event handler

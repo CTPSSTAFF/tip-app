@@ -4,7 +4,7 @@
 // Author: B. Krepp
 // Date: January, 2019
 (function() {
-    // Locals (if any) go here
+    // Internals of the library (if any) go here
     //
 	// *** Public API of the library begins here. ***
 	return tipCommon = {
@@ -35,9 +35,9 @@
                                     }
                                     return retval;
                                 }, // projCategoryToColor()
-        // moneyFormatter: Format data value of type "money" with two decimal places and commas as needed
-        //                 the value should be prefixed by a '$'.
-        moneyFormatter  :   function(row, cell, value, columnDef, dataContext) { 
+        // sgMoneyFormatter: SlickGrid formatting function to format data value of type "money" with two decimal places and commas as needed
+        //                   the value returned is prefixed by a '$'.
+        sgMoneyFormatter  :   function(row, cell, value, columnDef, dataContext) { 
                                   var retval, parts;
                                   if (value != null) {
                                       parts = (value + '').split('.');
@@ -56,7 +56,28 @@
                                       retval = '';
                                   }
                                   return retval;
-                            }, // moneyFormatter()
+                            }, // sgMoneyFormatter()
+        // moneyFormatter - 'Guts' of above sgMoneyFormatter function, w/o signature required by SlickGrid
+        moneyFormatter: function(value) {
+                                  var retval, parts;
+                                  if (value != null) {
+                                      parts = (value + '').split('.');
+                                      if (parts.length === 1) {
+                                          // No decimal point ==> No digits to right of decimal point
+                                          retval = '$' + (+parts[0]).toLocaleString() + '.00';
+                                      } else if (parts[1].length === 1) {
+                                          // Here: unabashed assumtption that parts.length === 2
+                                          // Case 1: One digit to the right of decimal point ==> provide final '0'
+                                          retval = '$' + (+parts[0]).toLocaleString() + '.' + parts[1] + '0';
+                                      } else {
+                                          // Case 2 (Unabashed assumption): two digits to right of decimal point
+                                          retval = '$' + (+parts[0]).toLocaleString() + '.' + parts[1];
+                                      }
+                                  } else {
+                                      retval = '';
+                                  }
+                                  return retval;            
+                        },
         // cleanupFunkyString: Takes a string containing a comma-separated substrings - some of which may be duplicates
         //                     and each of which may contain leading and/or trailing blanks, and returns a single string
         //                     containing the unique substrings, comma-delimited.
@@ -64,13 +85,21 @@
         //                     fields of the tip_projects table view.
         //                     N.B. This function requires that the underscore.js library has been loaded *before* this file.
         cleanupFunkyString: function(funkyString) {
-                                var i, tmp, retval;
+                                var i, j, tmp1, tmp2, retval;
                                 if (funkyString != null) {
-                                    tmp = funkyString.split(',');
-                                    for (i = 0; i < tmp.length; i++) {
-                                        tmp[i].replace(/ /g,'');
+                                    tmp1 = funkyString.split(',');
+                                    for (i = 0; i < tmp1.length; i++) {
+                                        tmp1[i] = tmp1[i].replace(/ /g,'');
                                     }
-                                    retval = _.uniq(tmp);
+                                    // Uniq-ify 
+                                    tmp2 = _.uniq(tmp1);
+                                    // Restore intervening commas, as/if needed
+                                    for (j = 0; j < tmp2.length; j++) { 
+                                        if (j < tmp2.length - 1) { 
+                                            tmp2[j] += ', '; 
+                                        } 
+                                    }
+                                    retval = tmp2;
                                 } else {
                                     retval = '';
                                 }

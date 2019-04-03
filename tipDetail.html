@@ -1,36 +1,20 @@
 <!DOCTYPE html>
 <head lang="en">
 <meta charset="utf-8">
-<title>Prototype TIP Project Detail Page Version 0.8</title>
+<title>Prototype TIP Project Detail Page Version 0.9</title>
 <link rel="stylesheet" href="tipDetail.css"/>
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.min.css"/>
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.structure.min.css"/>
 <link rel="stylesheet" href="libs/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css"/>
-<!-- The following line is needed for the Accessible Tabs package. -->
-<!--
-<script type="text/javascript">document.documentElement.className += " js";</script>
-<!--
-<link rel="stylesheet" href="libs/accessibleTabs-11Oct2016/slidingdoors/simple-sliding-doors.css" type="text/css" media="screen">
--->
-<link rel="stylesheet" href="tipDetail.css"/>
+
 
 <script src="https://maps.googleapis.com/maps/api/js?sensor=false&key=AIzaSyBDKncJRheezxvvmheB8JLH4Dk7EHfdZEk"></script>
-<!-- <script src="libs/jquery-3.3.1.min.js"></script> -->
-<!-- <script src="libs/jquery-3.3.1.js"></script> -->
 <!-- <script src="libs/jquery-2.2.4.min.js"></script> -->
 <script src="libs/jquery-2.2.4.js"></script>
 <script src="libs/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
-<!--
-<script src="libs/accessibleTabs-11Oct2016/js/jquery.tabs.min.js"></script>
-<script src="libs/jquery.accessibleGrid-0.09.js"></script>
--->
 <script src="libs/underscore-min.js"></script>
 <script src="tipCommon.js"></script>
 <script src="libs/download.js"></script>
-<!-- We probably won't need the Proj4 library in the detail page... -->
-<!--
-<script src="libs/proj4js-2.5.0/dist/proj4.js"></script>
--->
 <script src="libs/turf.min.js"></script>
 <script src="libs/es6string.js"></script>
 </head>
@@ -40,7 +24,7 @@
 	<div class="darkBlue"></div>
     <div id="banner"><a href="http://ctps.org/" target="_blank" title="Boston MPO"><img style="height:59px" src="./img/ctps_header.png" title="Opens Boston MPO website in a new window"></a></div>   
 </div>
-<h1 class="pagetitle">Prototype TIP Project Detail Page Version 0.8</h1>
+<h1 class="pagetitle">Prototype TIP Project Detail Page Version 0.9</h1>
 <div id="wrapper">
     <div id="map_wrapper">
         <h2 id="project_detail_header"></h2>
@@ -56,8 +40,10 @@
                     <li><a href="#proj_clean">Clean Air / Clean Communities</a></li>
                     <li><a href="#proj_tequity">Transportation Equity</a></li>
                     <li><a href="#proj_economic">Economic Vitality</a></li>
+                    <Li><a href="#proj_funding">Funding</a></li>
                 </ul>
                 <div class="tabbody" id="proj_overview">
+                    <h3>General Project Information</h3>
                     <table>
                         <tr>
                             <td>TIP ID</td>
@@ -90,11 +76,17 @@
                             <td id="proponent_header">Proponent</td>
                             <td id="proponent_or_proponents"></td>
                         </tr>
-                        
+                        <tr>
+                            <td>MPO Investment Program</td>
+                            <td id="mpo_invest_prog" class="proj_data"></td>
+                        </tr>                        
                         <tr>
                             <td>STIP Program</td>
                             <td id="stip_prog" class="proj_data"></td>
                         </tr> 
+                    </table>    
+                    <h3>Project Details</h3>    
+                    <table>    
                         <tr>
                             <td>Project Length</td>
                             <td id="proj_len" class="proj_data"></td>
@@ -127,13 +119,16 @@
                             <td>Miles of Exisiting Off-road Bicycle Facilities</td>
                             <td id="off_road_bike_fac_mi" class="proj_data"></td>
                         </tr>    
+                    </table>  
+                    <h3>Project Status</h3>
+                    <table>    
                         <!-- in_target_universe -->
                         <tr>
-                            <td>FDR On File</td>
+                            <td class="first_column">FDR On File?</td>
                             <td id="fdr_on_file" class="proj_data"></td>
                         </tr> 
                         <tr>
-                            <td>Approved by PRC</td>
+                            <td>Approved by PRC?</td>
                             <td id="prc_approved" class="proj_data"></td>
                         </tr>
                         <tr>
@@ -150,11 +145,11 @@
                         </tr>
                         <!-- eval_cur_year -->
                         <tr>
-                            <td>Adds Capacity</td>
+                            <td>Adds Capacity?</td>
                             <td id="adds_capacity" class="proj_data"></td>
                         </tr>
                         <tr>
-                            <td>LRTP Project</td>
+                            <td>LRTP Project?</td>
                             <td id="lrtp_project" class="proj_data"></td>
                         </tr>
                         <tr>
@@ -168,15 +163,11 @@
                         <tr>
                             <td>Funding Status</td>
                             <td id="funding_stat" class="proj_data"></td>
-                        </tr>     
-                        <tr>
-                            <td>MPO Investment Program</td>
-                            <td id="mpo_invest_prog" class="proj_data"></td>
                         </tr> 
-                        <tr>
-                            <td>LRTP Identified Need</td>
+                       <tr>
+                            <td>LRTP Identified Need?</td>
                             <td id="lrtp_identified_need" class="proj_data"></td>
-                        </tr>  
+                        </tr>      
                         <!-- first_year_prog -->
                         <tr>
                             <td>Amount Programmed</td>
@@ -189,7 +180,7 @@
                         <!-- first_tier_list -->
                     </table>
                     <div id="proponents_div_wrapper">
-                        <p>Proponents</p>
+                        <h3>Proponents</h3>
                         <div id="proponents_div">
                             <table id="proponents_table">
                                 <thead>
@@ -592,11 +583,11 @@
                         <table id="bridges_table">
                             <thead>
                                 <tr>
-                                    <td>BDEPT</td>
-                                    <td>Bridge Rating</td>
-                                    <td>AASHTO Rating</td>
-                                    <td>Year Built</td>
-                                    <td>Year Rebuilt</td>
+                                    <td class="columnHeader">BDEPT</td>
+                                    <td class="columnHeader">Bridge Rating</td>
+                                    <td class="columnHeader">AASHTO Rating</td>
+                                    <td class="columnHeader">Year Built</td>
+                                    <td class="columnHeader">Year Rebuilt</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1017,6 +1008,20 @@
                         </tr>                       
                     </table>
                 </div>  <!-- proj_economic -->
+                
+                <div class="tabbody" id="proj_funding">
+                    <div id="current_funding">
+                        <h3>Current Funding</h3>
+                        <table id="current_funding_table">
+                        </table>
+                    </div> <!-- current_funding -->
+                    <div id="proposed_funding">
+                        <h3>Proposed Funding</h3>
+                        <table id="proposed_funding_table">
+                        </table>
+                    </div> <!-- proposed_funding -->
+                </div> <!-- proj_funding -->
+                
             </div> <!-- tabs_div -->
         </div> <!-- project_detail_div -->
     </div> <!-- map_wrapper -->

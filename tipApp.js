@@ -1,6 +1,6 @@
 // TIP web application - project search page
 // Author:  B. Krepp
-// Date:    Dec 2018 - Jan 2019
+// Date:    Dec 2018 - Jan/Feb 2019
 //
 // Stuff pertaining to retrieval of data from TIP database, and the data itself:
 //
@@ -47,7 +47,7 @@ var gridColumns = [ { id : 'tip_id_col',    name : 'TIP ID',       field : 'tip_
                     { id : 'town_col',            name : 'Municipality',              field : 'towns',           width : 150, sortable : true, toolTip: 'Click column header to sort this column.' },
                     { id : 'subregion_col',       name : 'Subregion',                 field : 'subregions',      width : 150, sortable : true, toolTip: 'Click column header to sort this column.' },
                     { id : 'cur_cost_est_col',    name : 'Current Cost Estimate',     field : 'cur_cost_est',    width : 160, sortable : true, toolTip: 'Click column header to sort this column.',
-                      cssClass : 'moneyColumn',   formatter : tipCommon.moneyFormatter },                         
+                      cssClass : 'moneyColumn',   formatter : tipCommon.sgMoneyFormatter },                         
                     { id : 'first_year_prog',     name : 'First Year Programmed',     field : 'first_year_prog', width:  160,  sortable : true, toolTip: 'Click column header to sort this column.',
                       cssClass : 'dateColumn' }
                  ];
@@ -60,7 +60,7 @@ var accColDesc = [  { header : 'TIP ID',                  dataIndex : 'tip_id', 
                     { header : 'Category',                dataIndex : 'proj_cat' },
                     { header : 'Municipality',            dataIndex : 'towns' },
                     { header : 'Subregion',               dataIndex : 'subregions' },  
-                    { header : 'Current Cost Estimate',   dataIndex : 'cur_cost_est',   cls : 'moneyColumn', renderer : tipCommon.moneyFormatter },
+                    { header : 'Current Cost Estimate',   dataIndex : 'cur_cost_est',   cls : 'moneyColumn', renderer : tipCommon.sgMoneyFormatter },
                     { header : 'First Year Programmed',   dataIndex : 'first_year_prog' } ];
 var accGridOptions = { div_id    : 'project_list_contents_accessible',
                        table_id  : 'project_list_accessible',
@@ -68,6 +68,21 @@ var accGridOptions = { div_id    : 'project_list_contents_accessible',
                        colDesc   : accColDesc,
                        col1th    : true,
                        summary   : 'Selected TIP Projects' };
+                       
+// Stuff for labeling (centroids of) MAPC subregions
+var subregionCentroids = {
+    'ICC'       :  { name:  'ICC',      lng: -71.09714487, lat:	42.36485871 },
+    'ICC/TRIC-1':  { name:  'ICC/TRIC', lng: -71.0843212,  lat: 42.24126261 },  // Milton
+    'ICC/TRIC-2':  { name:  'ICC/TRIC', lng: -71.2410838,  lat: 42.28136977 },  // Needham
+    'MAGIC'     :  { name:  'MAGIC',    lng: -71.42223145, lat:	42.45586713 },
+    'MWRC'      :  { name:  'MWRC',     lng: -71.42305069, lat: 42.30381133 },
+    'NSPC'      :  { name:  'NSPC',     lng: -71.12358836, lat:	42.52346751 },
+    'NSTF'      :  { name:  'NSTF',     lng: -70.85369176, lat:	42.60673553 },
+    'SSC'       :  { name:  'SSC',      lng: -70.85128535, lat: 42.17717592 },
+    'SWAP'      :  { name:  'SWAP',     lng: -71.42819003, lat:	42.13804556 },
+    'TRIC'      :  { name:  'TRIC',     lng: -71.20413265, lat:	42.16445925 },
+    'TRIC/SWAP' :  { name:  'TRIC/SWAP',lng: -71.28420378, lat:	42.2366124  }
+}; 
 
 $(document).ready(function() {
     // Initialize the Google Map
@@ -160,6 +175,21 @@ $(document).ready(function() {
         mpo_boundary_obj = JSON.parse(mpo_boundary[0]);
         var lineFeature = mpo_boundary_obj.features[0];
         drawPolylineFeature(lineFeature, map, { strokeColor : mpoBoundaryColor, strokeOpacity : 0.7, strokeWeight: 8 });
+        
+        // Label the centroids of the MAPC subregions using the MapLabel class from the Google Maps v3 Utility Library
+        var mapLabel, latlng;
+        for (var subregion in subregionCentroids) {
+            latlng = new google.maps.LatLng(subregionCentroids[subregion].lat, subregionCentroids[subregion].lng);
+            mapLabel = new MapLabel( { text:       subregionCentroids[subregion].name,
+                                       position:   latlng,
+                                       map:        map,
+                                       fontSize:   16,
+                                       fontStyle:  'italic',
+                                       fontColor:  '#ff0000',
+                                       align:      'center'
+                       });
+            mapLabel.set('position', latlng);
+        }
 
         // Sort the array of TIP projects in ascending order on TIP_ID.
         // Note that TIP_ID if of type 'string'  and it sometimes includes non-numeric characters. Ugh!
@@ -417,6 +447,7 @@ function displayProjects(aProjects) {
             // as an attribute of each entry in 'aProjects'. Thus we have to obtain a 'project_town_id' manually.
             // Since there may be more than one of these for any given project, when this is the case, the one
             // we grab here is simply the first one found by searching tip_project_town on the project's tip_id.
+            //
             // If you think you understood the above comment, you probably didn't. Please read it again.
             // -- BK 01/30/2019
             //

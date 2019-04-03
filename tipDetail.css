@@ -17,14 +17,12 @@
 	height:59px;
 	background-color:white
 }
-
 .lightBlue{
 	height:27px;
 	width:100%;
 	background-color:#7DA1C4;
 	z-index:10;
 }
-
 .darkBlue{
 	height:16px;
 	width:100%;
@@ -42,7 +40,6 @@
     margin-right: 5%;
     height: 100%;
 }
-
 #map {
     height: 100%;
     border: 4px solid #B87F32; 
@@ -55,7 +52,7 @@
     margin-bottom: 20px;
 }
 
-/* Throttle the jQueryUI font size back a bit */
+/* Throttle the default jQueryUI font size back a bit */
 .ui-widget {
     font-size:80% !important;
 }
@@ -63,26 +60,77 @@
 .tabbody table {
     width: 100%;
 }
-/* Make the first 'column' in each table at least 500px wide and its content is vertically aligned ...  */
-.tabbody table tr > td {
+/* Make the first 'column' in each table only as wide as it needs to be, and render its contents in bold font...  */
+#proj_overview table tr td:first-child {
     vertical-align: top;
-    min-width: 500px;
+    font-weight: bold;
+    width: 300px;
 }
-/* ... Except for the bridges table... */
-#bridges_table tr > td {
+#proj_safety table tr td:first-child {
     vertical-align: top;
+    font-weight: bold;
+    width: 360px;
+}
+#proj_sys_preservation table tr td:first-child {
+    vertical-align: top;
+    font-weight: bold;
+    width: 460px;
+}
+#proj_capacity_mgt table tr td:first-child {
+    vertical-align: top;
+    font-weight: bold;
+    width: 360px;
+}
+#proj_clean table tr td:first-child {
+    vertical-align: top;
+    font-weight: bold;
+    width: 450px;
+}
+#proj_tequity table tr td:first-child {
+    vertical-align: top;
+    font-weight: bold;
+    width: 420px;
+}
+#proj_economic table tr td:first-child {
+    vertical-align: top;
+    font-weight: bold;
+    width: 500px;
+}
+/* Special hadling for the bridges table... */
+#bridges_table tr > td:first-child {
+    vertical-align: top;
+    font-weight: bold;
     min-width: 150px;
 }
-/* ... And the proponents table. */
-#proponents_table tr > td {
+/* ... and the proponents table... */
+#proponents_table tr > td:first-child {
     vertical-align: top;
+    font-weight: bold;
     min-width: 150px;
 }
-
+/* ... and the current and proposed funding tables. */
+#current_funding_table tr > td:first-child {
+    font-weight: bold;
+    width: 200px;
+}
+#proposed_funding_table tr > td;first-child {
+    font-weight: bold;
+    width: 200px;
+}
 /* 'Stripe' rows in tables presenting project data */
 .tabbody table tr:nth-child(odd) { 
     background: AliceBlue; 
 }
 .tabbody table tr:nth-child(odd) { 
     background: white; 
+}
+.columnHeader {
+    text-align: center;
+    font-weight: bold;
+}
+.moneyColumn {
+    text-align: right;
+}
+.dateColumn {
+    text-align: right;
 }
