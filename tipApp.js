@@ -1,7 +1,53 @@
-// TIP web application - project search page
-// Author:  B. Krepp
-// Date:    Dec 2018 - Jan/Feb/Mar 2019
+// TIP web application - main application (project search) page
+// Author:  Ben Krepp
+// Date:    Dec 2018 and Jan-Apr 2019
 //
+// Data sources:
+//     GeoServer workspace: tip_viewer
+//     GeoServer store:     tip
+//     Layers and Tables:   
+//          tip_viewer:tip_projects_view        - TIP projects table
+//          tip_viewer:tip_project_town_view    - project/town cross-product table
+//          tip_viewer:tip_city_town_lookup     - lookup table of cities, towns, and other entities (e.g., MassDOT)
+//          tip_viewer:tip_lut_proj_cat         - lookup table of project categories
+//          tip_viewer:tip_spatial_4app         - spatial table of point geometries, 1 per project        
+//
+// Dependencies on external libraries:
+//     1. jQuery version 2.2.4
+//     2. jQueryUI verson 1.2.1
+//     3. Google Maps API version 3
+//     4. Google Maps V3 Utility Library - maplabel.js
+//     5. SlickGrid version 2.4.1
+//     6. jQuery.event.drag version 2.3.0
+//     7. jQuery.event.drop version 2.3.0
+//     8. underscore.js version 1.9.1
+//     9. download.js version 4.2
+//    10. turf.js
+//    11. es6string.js
+//    12. popper.js version 1.14.6
+//
+// General Comments
+// ================
+// Work on this app was begun in the late fall of 2018 with the understanding that it would ba functionally limited
+// reworking of CTPS's second-generration TIP web app. The basic idea was to bring up something that met most user's
+// needs very quickly and at low cost, and leave the re-specification / re-design / re-implementation of something
+// more grandiose for the next federal fiscal year. Another, equally important, driving factor was the decision to
+// limit the number of projects in the backing database. Previously this database had been populated with both 
+// 'real' projects, projects under serious consideration for funding, aand 'vaporware' projects that were little 
+// more than suggestions. The latter class of project vastly bloated the database. With the decision to limit the
+// contents of the backing database to 'real' projects and those under serious consideration, the size of the database
+// shrunk by about an order of magnitude to only around 200-300 projects. In view of this, and in view of the goal
+// of simplicity of implementation of this version of the app, the design decision was made to load all relevant
+// database tables 'in core' and query them there rather than using AJAX for round-trips to the server.
+// By February of 2019, the number of features being requested by the project team for THIS version of the app 
+// began to ballon. Although because of maajor 'functionality creep' it was becoming clear that some of the fundamental
+// design choices were being stretched to the breeaking point, at this point it was no longer possible to consider
+// re-architeching the app (e.g., moving some logic to the server, using a more functionally rich mapping platform),
+// because of budget and schedule constrtaints. With a bit of luck, this might be possible next year.
+//
+// B. Krepp, Attending Metaphysician
+// 16 April 2019
+
 // Stuff pertaining to retrieval of data from TIP database, and the data itself:
 //
 var wfsServerRoot = location.protocol + '//' + location.hostname + ':8080/geoserver/wfs';
@@ -448,8 +494,9 @@ function queryProjects(e) {
     // var results = DATA.projects_JOIN;  
     var results = DATA.projects;
     
+    // Per request by Matt Genova, 4/2/2019:
     // Restrict app to the current year's TIP, i.e., projects with funding_stat == ‘'FYs 2020-24 TIP Programmed'
-    //  results = _.filter(results, function(proj) { return (proj.properties['funding_stat'] === 'FFYs 2020-24 TIP Programmed'); });
+    results = _.filter(results, function(proj) { return (proj.properties['funding_stat'] === 'FFYs 2020-24 TIP Programmed'); });
     
     // 1. Did the search specify a town?
     if (town !== 'All') {

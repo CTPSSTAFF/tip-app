@@ -1,6 +1,38 @@
 // TIP web application - project detail page
-// Author:  B. Krepp
-// Date:    Dec 2018 - Jan/Feb/Mar 2019
+// Author:  Ben Krepp
+// Date:    Dec 2018 - Jan-Apr 2019
+//
+// Data sources:
+//     GeoServer workspace: tip_viewer
+//     GeoServer store:     tip
+//     Layers and Tables:   
+//          tip_viewer:tip_evaluation_criteria          - TIP project evaluation criteria table
+//          tip_viewer:tip_bridge_data                  - bridge data table
+//          tip_viewer:tip_bridge_component_view        - bridge component table (suppors multiple 'components' per bridge)
+//          tip_viewer:tip_project_town_view            - project/town cross-product table
+//          tip_viewer:tip_project_proponent_view       - table of TIP project proponents
+//          tip_viewer:tip_funding_current_sum_view     - summary table of currrent funding for TIP projects
+//          tip_viewer:tip_funding_proposed_sum_view    - summary table for proposed funding for TIP projects
+//          tip_viewer:tip_project_amendment_view       - table of TIP ammentments (currently unused)
+//          tip_viewer:tip_contacts                     - table of TIP contacts
+//          tip_viewer:tip_project_town_list_view       - 'flattened' project/town cross-product table, one record per project
+//          tip_viewer:tip_project_proponent_list_view  - 'flattened' project/proponent cross-product table, one record per project    
+//          tip_viewer:tip_spatial_line_project_4app    - spatial table of line geometries, 1 per project    
+//
+// Dependencies on external libraries:
+//     1. jQuery version 2.2.4
+//     2. jQueryUI verson 1.2.1
+//     3. Google Maps API version 3
+//     4. underscore.js version 1.9.1
+//     5. download.js version 4.2
+//     6. turf.js
+//     7. es6string.js
+//
+// General Comments
+// ================
+// Please see header comments in tipApp.js
+//
+
 $(document).ready(function() {
     // Stuff pertaining to retrieval of data from TIP database, and the data itself:
     //
