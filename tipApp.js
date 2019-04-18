@@ -487,7 +487,7 @@ function queryProjects(e) {
     var proj_status = $('#select_proj_status option:selected').val();
     var first_year = +$('#select_first_yr_prog option:selected').val();
     var ltrp_projects = $('#lrtp_project').prop('checked');
-    var mpo_funded = $('#mpo_funded').prop('checked');
+    var in_target_universe = $('#in_target_universe').prop('checked');
     var ctps_study = $('#ctps_study').prop('checked');
      // var tip_id = $('#select_tip_id option:selected').val();   
     
@@ -528,12 +528,12 @@ function queryProjects(e) {
     }  
     // 6. Was the search for LRTP projects?
     if (lrtp_project == true) {
-        predicate = function(proj_rec) { return proj_rec.properties['lrtp_project'] === true; };
+        predicate = function(proj_rec) { return proj_rec.properties['lrtp_project'] === -1; };
         results = _.filter(results, predicate);               
     }
-    // 7. Was the search for MPO-funded projects?
-    if (mpo_funded == true) {
-        predicate = function(proj_rec) { return proj_rec.properties['mpo_project'] === true; };
+    // 7. Was the search for regional target-funded projects?
+    if (in_target_universe == true) {
+        predicate = function(proj_rec) { return proj_rec.properties['in_target_universe'] === -1; };
         results = _.filter(results, predicate);
     }  
     // 8. Was the search for projects involving a CTPS study?
