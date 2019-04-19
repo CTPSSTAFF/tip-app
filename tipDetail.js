@@ -745,7 +745,7 @@ $(document).ready(function() {
         }
         
         // Proposed funding
-        if (has_prop_funding == true) {
+        if (has_prop_funding == true && prop_funding.length > 0) {
             headerLine = '<thead><tr><td></td><td class="columnHeader">FY 2019</td>' +
                                              '<td class="columnHeader">FY 2020</td>' +
                                              '<td class="columnHeader">FY 2021</td>' +
