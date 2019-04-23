@@ -39,7 +39,8 @@ $(document).ready(function() {
     // Note that the following must be VIEWS in the underlying PostgreSQL database:
     //     tip_projects, bridge_component, project_town, project_proponent, funding, amendment, project_town_list, project_proponent_list
     //  
-    var wfsServerRoot = location.protocol + '//' + location.hostname + ':8080/geoserver/wfs';
+    // var wfsServerRoot = location.protocol + '//' + location.hostname + ':8080/geoserver/wfs';
+    var wfsServerRoot = location.protocol + '//' + location.hostname + '/maploc/wfs';
     var projectsURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_projects_view&outputformat=json';
     var eval_criteriaURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_evaluation_criteria&outputformat=json';
     var bridge_componentURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_bridge_component_view&outputformat=json';
