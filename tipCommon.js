@@ -85,7 +85,7 @@
         //                     fields of the tip_projects table view.
         //                     N.B. This function requires that the underscore.js library has been loaded *before* this file.
         cleanupFunkyString: function(funkyString) {
-                                var i, j, tmp1, tmp2, retval;
+                                var i, j, tmp1, tmp2, tmp3, retval;
                                 if (funkyString != null) {
                                     tmp1 = funkyString.split(',');
                                     for (i = 0; i < tmp1.length; i++) {
@@ -93,13 +93,15 @@
                                     }
                                     // Uniq-ify 
                                     tmp2 = _.uniq(tmp1);
+                                    tmp3 = '';
                                     // Restore intervening commas, as/if needed
                                     for (j = 0; j < tmp2.length; j++) { 
-                                        if (j < tmp2.length - 1) { 
-                                            tmp2[j] += ', '; 
+                                        tmp3 += tmp2[j];
+                                        if (j < tmp2.length - 1) {                                           
+                                            tmp3 +=  ', '; 
                                         } 
                                     }
-                                    retval = tmp2;
+                                    retval = tmp3;
                                 } else {
                                     retval = '';
                                 }

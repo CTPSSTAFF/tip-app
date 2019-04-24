@@ -363,7 +363,7 @@ $(document).ready(function() {
         // And, per customer request query for all projects on app startup
         // Per swtich to 'tabbed' presentation, with "search" tab (containing Google Map) *not* exposed 
         //  when $(document).ready event fires - the following call has been moved into "initializeMap"
-        // $('#search_button').trigger('click');
+        $('#search_button').trigger('click');
     }); // handler for 'when loading of data is done' event
 });	// $(document).ready event handler
 
@@ -483,7 +483,7 @@ function queryProjects(e) {
     // If more than one search criterion was selected, search on the logical AND of these
     var town_id = +($('#select_town option:selected').val());      // Convert string containing text of number to number
     var town = $('#select_town option:selected').html();           // Get text of town name
-    var subregion = $('#select_subregion option:selected').html(); // Get text of subregion name
+    var subregion = $('#select_subregion option:selected').val();  // Get text of subregion name: upper-case abbreviation of subregion is in "value" prop of page element
     var category = $('#select_proj_category option:selected').val();
     var proj_status = $('#select_proj_status option:selected').val();
     var first_year = +$('#select_first_yr_prog option:selected').val();
