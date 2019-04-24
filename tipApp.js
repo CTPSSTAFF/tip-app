@@ -436,7 +436,7 @@ function initializeMap() {
     google.maps.event.addListener(map, "zoom_changed", 
         function zoomChangedHandler(e) { 
             var i, zoomLev = map.getZoom();
-            console.log('Zoom level is: ' + zoomLev);
+            // console.log('Zoom level is: ' + zoomLev);
             for (i = 0; i < mapLabels.length; i++) {
                 if (zoomLev <= 10) { 
                     mapLabels[i].setOptions({'fontSize' : 10});
