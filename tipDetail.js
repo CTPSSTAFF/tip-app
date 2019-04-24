@@ -192,6 +192,10 @@ $(document).ready(function() {
                      success	:   function (data, textStatus, jqXHR) {
                                         var gmPolyline = {}; lineFeature = {}, aFeatCoords = [], point = {}, aAllPoints = [], bbox = [], googleBounds = {};
                                         var i, j, colour;
+                                        if (data.features.length === 0) {
+                                            alert('Warning: No line geometry found for project with TIP_ID = ' + tip_id + '.');
+                                            return;
+                                        }
                                         lineFeature = data.features[0];
                                         colour = tipCommon.projCategoryToColor(p);
                                         if (lineFeature.geometry.type === 'MultiLineString') {
