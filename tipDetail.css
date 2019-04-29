@@ -96,36 +96,87 @@
     font-weight: bold;
     width: 500px;
 }
+
 /* Special hadling for the bridges table... */
-#bridges_table tr > td:first-child {
+#bridges_table tr > td:nth-child(1) {
     vertical-align: top;
     font-weight: bold;
-    min-width: 150px;
+    width: 20%;
+    text-align: left;
 }
+#bridges_table tr > td:nth-child(2) {
+    vertical-align: top;
+    width: 20%;
+    text-align: center;
+}
+#bridges_table tr > td:nth-child(3) {
+    vertical-align: top;
+    width: 20%;
+    text-align: center;
+}
+#bridges_table tr > td:nth-child(4) {
+    vertical-align: top;
+    width: 20%;
+    text-align: center;
+}
+#bridges_table tr > td:nth-child(5) {
+    vertical-align: top;
+    width: 20%;
+    text-align: center;
+}
+
 /* ... and the proponents table... */
 #proponents_table tr > td:first-child {
     vertical-align: top;
     font-weight: bold;
     min-width: 150px;
 }
-/* ... and the current and proposed funding tables. */
-#current_funding_table tr > td:first-child {
-    font-weight: bold;
-    width: 200px;
-}
+
+/* ... and the current funding table... */
 #current_funding_table tr > td:nth-child(1) {
     font-weight: bold;
     width: 16.66%;
+    text-align: left;
 }
-#current_funding_table tr > td:nth-child(1n+1) {
-    width: 16.66%
+#current_funding_table tr > td:nth-child(2) {
+    width: 16.66%;
+    text-align: center;
 }
+#current_funding_table tr > td:nth-child(3) {
+    width: 16.66%;
+    text-align: center;
+}
+#current_funding_table tr > td:nth-child(4) {
+    width: 16.66%;
+    text-align: center;
+}
+#current_funding_table tr > td:nth-child(5) {
+    width: 16.66%;
+    text-align: center;
+}
+#current_funding_table tr > td:nth-child(6) {
+    width: 16.66%;
+    text-align: center;
+}
+/* ... and the proposed funding table. */
 #proposed_funding_table tr > td:nth-child(1) {
     font-weight: bold;
-    width: 16.66%
+    width: 16.66%;
 }
-#proposed_funding_table tr > td:nth-child(1n+1) {
-    width: 16.66%
+#proposed_funding_table tr > td:nth-child(2) {
+    width: 16.66%;
+}
+#proposed_funding_table tr > td:nth-child(3) {
+    width: 16.66%;
+}
+#proposed_funding_table tr > td:nth-child(4) {
+    width: 16.66%;
+}
+#proposed_funding_table tr > td:nth-child(5) {
+    width: 16.66%;
+}
+#proposed_funding_table tr > td:nth-child(6) {
+    width: 16.66%;
 }
 
 /* 'Stripe' rows in tables presenting project data */
