@@ -341,28 +341,28 @@ $(document).ready(function() {
         //       If any such data item is null, render it as 0.
         //
         // Project length
-        tmp = (p.properties['proj_len'] != null) ? p.properties['proj_len'] : 0;
+        tmp = (p.properties['proj_len'] != null) ? p.properties['proj_len'].toLocaleString() : 0;
         $('#proj_len').html(tmp + ' miles');
         // Existing lane-miles
-        tmp = (p.properties['exist_lane_mi'] != null) ? p.properties['exist_lane_mi'] : 0;
+        tmp = (p.properties['exist_lane_mi'] != null) ? p.properties['exist_lane_mi'].toLocaleString() : 0;
         $('#exist_lane_mi').html(tmp + ' lane-miles');
         // Lane-miles added or improved
-        tmp = (p.properties['lane_mi_added_improved'] != null) ? p.properties['lane_mi_added_improved'] : 0;
+        tmp = (p.properties['lane_mi_added_improved'] != null) ? p.properties['lane_mi_added_improved'].toLocaleString() : 0;
         $('#lane_mi_added_improved').html(tmp + ' lane-miles');
         // Total lane-miles
-        tmp = (p.properties['tot_lane_mi'] != null) ? p.properties['tot_lane_mi'] : 0;
+        tmp = (p.properties['tot_lane_mi'] != null) ? p.properties['tot_lane_mi'].toLocaleString() : 0;
         $('#tot_lane_mi').html(tmp + ' lane-miles');
         // Sidewalk miles
-        tmp = (p.properties['sidewalk_mi'] != null) ? p.properties['sidewalk_mi'] : 0;
+        tmp = (p.properties['sidewalk_mi'] != null) ? p.properties['sidewalk_mi'].toLocaleString() : 0;
         $('#sidewalk_mi').html(tmp + ' miles');
         // Sidewalk miles improved
-        tmp = (p.properties['sidewalk_mi_improved'] != null) ? p.properties['sidewalk_mi_improved'] : 0;
+        tmp = (p.properties['sidewalk_mi_improved'] != null) ? p.properties['sidewalk_mi_improved'].toLocaleString() : 0;
         $('#sidewalk_mi_improved').html(tmp + ' miles');        
         // On-road bike facility miles 
-        tmp = (p.properties['on_road_bike_fac_mi'] != null) ? p.properties['on_road_bike_fac_mi'] : 0;
+        tmp = (p.properties['on_road_bike_fac_mi'] != null) ? p.properties['on_road_bike_fac_mi'].toLocaleString() : 0;
         $('#on_road_bike_fac_mi').html(tmp + ' miles');       
         // Off-road bike facility miles
-        tmp = (p.properties['off_road_bike_fac_mi'] != null) ? p.properties['off_road_bike_fac_mi'] : 0;
+        tmp = (p.properties['off_road_bike_fac_mi'] != null) ? p.properties['off_road_bike_fac_mi'].toLocaleString() : 0;
         $('#off_road_bike_fac_mi').html(tmp + ' miles');
         
         $('#fdr_on_file').html(p.properties['fdr_on_file'] === -1 ? 'Yes' : 'No');
@@ -428,13 +428,20 @@ $(document).ready(function() {
         var ec = _.find(DATA.eval_criteria,predicate);
         
         // Evaluation criteria - safety
-        $('#num_fatal_crashes').html(ec.properties['num_fatal_crashes']);
-        $('#num_injury_crashes').html(ec.properties['num_injury_crashes']);
-        $('#num_property_crashes').html(ec.properties['num_property_crashes']);
-        $('#num_bicycle_crashes').html(ec.properties['num_bicycle_crashes']);
-        $('#num_ped_crashes').html(ec.properties['num_ped_crashes']);
-        $('#num_total_crashes').html(ec.properties['num_total_crashes']);
-        $('#epdo').html(ec.properties['epdo']);
+        tmp = (ec.properties['num_fatal_crashes'] != null) ? ec.properties['num_fatal_crashes'].toLocaleString() : '';
+        $('#num_fatal_crashes').html(tmp);
+        tmp = (ec.properties['num_injury_crashes'] != null) ? ec.properties['num_injury_crashes'].toLocaleString() : '';
+        $('#num_injury_crashes').html(tmp);
+        tmp = (ec.properties['num_property_crashes'] != null) ? ec.properties['num_property_crashes'].toLocaleString() : '';
+        $('#num_property_crashes').html(tmp);
+        tmp = (ec.properties['num_bicycle_crashes'] != null) ? ec.properties['num_bicycle_crashes'].toLocaleString() : '';
+        $('#num_bicycle_crashes').html(tmp);
+        tmp = (ec.properties['num_ped_crashes'] != null) ? ec.properties['num_ped_crashes'].toLocaleString() : '';
+        $('#num_ped_crashes').html(tmp);
+        tmp = (ec.properties['num_total_crashes'] != null) ? ec.properties['num_total_crashes'].toLocaleString() : '';
+        $('#num_total_crashes').html(tmp);
+        tmp = (ec.properties['epdo'] != null) ? ec.properties['epdo'].toLocaleString() : '';
+        $('#epdo').html(tmp);
         $('#crash_severity_val_scor').html(ec.properties['crash_severity_val_scor']);
         $('#hsip_cluster').html(ec.properties['hsip_cluster']  === -1 ? 'Yes' : 'No');
         $('#truck_crashes').html(ec.properties['truck_crashes']);
@@ -445,13 +452,15 @@ $(document).ready(function() {
         $('#intersec_type').html(ec.properties['intersec_type']);
         $('#urb_fed_func_class').html(ec.properties['urb_fed_func_class']);
         $('#crash_score_corr').html(ec.properties['crash_score_corr']);
-        $('#total_adt').html(ec.properties['total_adt'].toLocaleString());
-        $('#truck_adt').html(ec.properties['truck_adt'].toLocaleString());
+        tmp = (ec.properties['total_adt'] != null) ? ec.properties['total_adt'].toLocaleString() : '';
+        $('#total_adt').html(tmp);
+        tmp = (ec.properties['truck_adt'] != null) ? ec.properties['truck_adt'].toLocaleString() : '';
+        $('#truck_adt').html(tmp);
         $('#exist_ped_facilities').html(ec.properties['exist_ped_facilities']);
         $('#exist_ped_safety_issues').html(ec.properties['exist_ped_safety_issues']);
         $('#exist_ped_use').html(ec.properties['exist_ped_use']);
-        $('#exist_ped_use_desc').html(ec.properties['#exist_ped_use_desc']);
-        $('#desired_ped_use').html(ec.properties['#desired_ped_us']);
+        $('#exist_ped_use_desc').html(ec.properties['exist_ped_use_desc']);
+        $('#desired_ped_use').html(ec.properties['desired_ped_use']);
         $('#desired_ped_use_desc').html(ec.properties['desired_ped_use_desc']);
         $('#prop_ped_countermeas').html(ec.properties['prop_ped_countermea']);
         $('#ped_countermeas_eval').html(ec.properties['ped_countermeas_eval']);
@@ -475,6 +484,7 @@ $(document).ready(function() {
         $('#bike_countermeas_score').html(ec.properties['bike_countermeas_scor']);
         $('#bike_hsip').html(ec.properties['bike_hsip'] === -1 ? 'Yes' : 'No');
         $('#bike_hsip_bonus_score').html(ec.properties['bike_hsip_bonus_score']);
+        tmp = (ec.properties['max_cluster_epdo'] != null) ? ec.properties['max_cluster_epdo'].toLocaleString() : '';
         $('#max_cluster_epdo').html(ec.properties['max_cluster_epdo']);
         $('#truck_rdwy_deficiency').html(ec.properties['truck_rdwy_deficiency']);
         $('#prop_truck_countermeas').html(ec.properties['prop_truck_countermeas']);
@@ -495,8 +505,10 @@ $(document).ready(function() {
         $('#iri_year').html(ec.properties['iri_year']);
         $('#exist_pavement_cond_desc').html(ec.properties['exist_pavement_cond_desc']);
         $('#imprv_substd_pvmt_scor').html(ec.properties['imprv_substd_pvmt_scor']);
-        $('#total_signals_proj_area').html(ec.properties['total_signals_proj_area']);
-        $('#signals_to_be_improved').html(ec.properties['signals_to_be_improved']);
+        tmp = (ec.properties['total_signals_proj_area'] != null) ? ec.properties['total_signals_proj_area'].toLocaleString() : '';
+        $('#total_signals_proj_area').html(tmp);
+        tmp = (ec.properties['signals_to_be_improved'] != null) ? ec.properties['signals_to_be_improved'].toLocaleString() : '';
+        $('#signals_to_be_improved').html(tmp);
         $('#signal_desc').html(ec.properties['signal_desc']);
         $('#planned_signal_improv').html(ec.properties['planned_signal_improv']);
         $('#imprv_substd_sig_scor').html(ec.properties['imprv_substd_sig_scor']);
@@ -560,11 +572,16 @@ $(document).ready(function() {
         // Evaluation criteria - capacity management
         $('#mbta_bus_rtes').html(ec.properties['mbta_bus_rtes']);
         $('#other_transit_rtes').html(ec.properties['other_transit_rtes']);
-        $('#daily_transit_runs').html(ec.properties['daily_transit_runs']);
-        $('#nobld_signal_dealy').html(ec.properties['nobld_signal_dealy']);
-        $('#bld_signal_dealy').html(ec.properties['nobld_signal_dealy']);
-        $('#chg_signal_dealy').html(ec.properties['chg_signal_dealy']);
-        $('#chg_transit_veh_delay').html(ec.properties['chg_transit_veh_delay'] + ' hours');
+        tmp = (ec.properties['daily_transit_runs'] != null) ? ec.properties['daily_transit_runs'].toLocaleString() : '';
+        $('#daily_transit_runs').html(tmp);
+        tmp = (ec.properties['nobld_signal_dealy'] != null) ? ec.properties['nobld_signal_dealy'].toLocaleString() : '';
+        $('#nobld_signal_dealy').html(tmp);
+        tmp = (ec.properties['bld_signal_dealy'] != null) ? ec.properties['bld_signal_dealy'].toLocaleString() : '';
+        $('#bld_signal_dealy').html(tmp);
+        tmp = (ec.properties['chg_signal_dealy'] != null) ? ec.properties['chg_signal_dealy'].toLocaleString() : '';
+        $('#chg_signal_dealy').html(tmp);
+        tmp = (ec.properties['chg_transit_veh_delay'] != null) ? ec.properties['chg_transit_veh_delay'].toLocaleString() + ' hours' : '';
+        $('#chg_transit_veh_delay').html(tmp);
         $('#transit_delay_base_scor').html(ec.properties['transit_delay_base_scor']);
         $('#imprv_key_bus_rtes').html(ec.properties['imprv_key_bus_rtes']  === -1 ? 'Yes' : 'No');
         $('#transt_delay_bonus_scor').html(ec.properties['transt_delay_bonus_scor']);
@@ -618,7 +635,8 @@ $(document).ready(function() {
         //      - disabled population concentration
         //
         $('#min_pop_pct').html(ec.properties['min_pop_pct'] + '%');
-        $('#min_pop_count').html(ec.properties['min_pop_count'] + ' people');
+        tmp = (ec.properties['min_pop_count'] != null) ? ec.properties['min_pop_count'].toLocaleString() + ' people' : '';
+        $('#min_pop_count').html(tmp);
         //
         // Minority population concentration
         tmp = ec.properties['min_pop_concent'];
@@ -626,7 +644,8 @@ $(document).ready(function() {
         $('#min_pop_concent').html(tmp);
         $('#min_pop_score').html(ec.properties['min_pop_score']);
         $('#low_inc_hh_pct').html(ec.properties['low_inc_hh_pct'] + '%');
-        $('#low_inc_hh_count').html(ec.properties['low_inc_hh_count'] + ' households');
+        tmp = (ec.properties['low_inc_hh_count'] != null) ? ec.properties['low_inc_hh_count'].toLocaleString() + ' households' : '';
+        $('#low_inc_hh_count').html(tmp);
         //
         // Low-income household concentration
         tmp = ec.properties['low_inc_hh_concent'];
@@ -634,7 +653,8 @@ $(document).ready(function() {
         $('#low_inc_hh_concent').html(tmp);
         $('#low_inc_hh_score').html(ec.properties['low_inc_hh_score']);
         $('#lep_pop_pct').html(ec.properties['lep_pop_pct'] + '%');
-        $('#lep_pop_count').html(ec.properties['lep_pop_count'] + ' people');
+        tmp = (ec.properties['lep_pop_count'] != null) ? ec.properties['lep_pop_count'].toLocaleString() + ' people' : '';
+        $('#lep_pop_count').html(tmp);
         //
         // LEP population concentration
         tmp = ec.properties['lep_pop_concent'];
@@ -642,6 +662,7 @@ $(document).ready(function() {
         $('#lep_pop_concent').html(tmp);  
         $('#lep_pop_score').html(ec.properties['lep_pop_score']);
         $('#elderly_pop_pct').html(ec.properties['elderly_pop_pct'] + '%');
+        tmp = (ec.properties['elderly_pop_count'] != null) ? ec.properties['elderly_pop_count'].toLocaleString() + ' people' : '';
         $('#elderly_pop_count').html(ec.properties['elderly_pop_count'] + ' people');
         //
         // Elderly population concentration
@@ -650,6 +671,7 @@ $(document).ready(function() {
         $('#elderly_pop_concent').html(tmp);
         $('#elderly_pop_score').html(ec.properties['elderly_pop_score']);
         $('#zero_veh_hh_pct').html(ec.properties['zero_veh_hh_pct'] + '%');
+        tmp = (ec.properties['zero_veh_hh_count'] != null) ? ec.properties['zero_veh_hh_count'].toLocaleString() + ' households' : '';
         $('#zero_veh_hh_count').html(ec.properties['zero_veh_hh_count'] + ' households');
         //
         // ZVH household concentration        
@@ -658,7 +680,8 @@ $(document).ready(function() {
         $('#zero_veh_hh_concent').html(tmp);
         $('#zero_veh_hh_score').html(ec.properties['zero_veh_hh_score']);
         $('#disabled_pop_pct').html(ec.properties['disabled_pop_pct'] + '%');
-        $('#disabled_pop_count').html(ec.properties['disabled_pop_count'] + ' people');
+        tmp = (ec.properties['disabled_pop_count'] != null) ? ec.properties['disabled_pop_count'].toLocaleString() + ' people' : '';
+        $('#disabled_pop_count').html(tmp);
         // 
         // Disabled population concentration
         tmp = ec.properties['disabled_pop_concent'];
