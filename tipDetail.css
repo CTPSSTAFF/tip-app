@@ -97,6 +97,10 @@
     width: 500px;
 }
 
+/* Make the background of the 'subheadings' in the project detail tabs slightly darker than the background. */
+h3.detail_section_header {
+    background-color: lightgray;
+}
 /* Special hadling for the bridges table... */
 #bridges_table tr > td:nth-child(1) {
     vertical-align: top;
