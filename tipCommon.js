@@ -38,8 +38,10 @@
         // sgMoneyFormatter: SlickGrid formatting function to format data value of type "money" with two decimal places and commas as needed
         //                   the value returned is prefixed by a '$'.
         sgMoneyFormatter  :   function(row, cell, value, columnDef, dataContext) { 
-                                  var retval, parts;
+                                  var retval, parts, temp;
                                   if (value != null) {
+                                      // Latest (4/30/2019) request is to not show cents when displaying money values, even if they're present.
+                                      /* 
                                       parts = (value + '').split('.');
                                       if (parts.length === 1) {
                                           // No decimal point ==> No digits to right of decimal point
@@ -52,6 +54,9 @@
                                           // Case 2 (Unabashed assumption): two digits to right of decimal point
                                           retval = '$' + (+parts[0]).toLocaleString() + '.' + parts[1];
                                       }
+                                      */
+                                    temp = value.toFixed(0);
+                                    retval = '$' + (+temp).toLocaleString();
                                   } else {
                                       retval = '';
                                   }
@@ -59,8 +64,10 @@
                             }, // sgMoneyFormatter()
         // moneyFormatter - 'Guts' of above sgMoneyFormatter function, w/o signature required by SlickGrid
         moneyFormatter: function(value) {
-                                  var retval, parts;
+                                  var retval, parts, temp;
                                   if (value != null) {
+                                      // Latest (4/30/2019) request is to not show cents when displaying money values, even if they're present.
+                                      /*
                                       parts = (value + '').split('.');
                                       if (parts.length === 1) {
                                           // No decimal point ==> No digits to right of decimal point
@@ -73,6 +80,9 @@
                                           // Case 2 (Unabashed assumption): two digits to right of decimal point
                                           retval = '$' + (+parts[0]).toLocaleString() + '.' + parts[1];
                                       }
+                                      */
+                                    temp = value.toFixed(0);
+                                    retval = '$' + (+temp).toLocaleString();
                                   } else {
                                       retval = '';
                                   }
