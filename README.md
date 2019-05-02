@@ -19,7 +19,7 @@ Dependencies on external libraries:
 Note on updating the spatial data for this app:
 
 The two sets spatial data (points and lines) for this app are to be updated as follows:
-1. Use the ArcGIS 'Delete Rows' tool to delete all rows from the table tip_admin.tip_spatial
-2. Use the ArGIS 'Append' tool to append rows from a feature class containing the new data to tip_admin.tip_spatial
+1. Use the ArcGIS 'Delete Feature' tool to delete all rows from the table tip_admin.tip_spatial
+2. Use the ArGIS 'Append' tool to append rows from a feature class containing the new data (mpodata.tip_spatial) to tip_admin.tip_spatial
 3. (non-action) The database View public.tip_spatial_4app will rematerialize itself, based on the freshly loaded data
 4. Repeat steps (1) through (3) for the table tip_admin.tip_spatial_project_line
