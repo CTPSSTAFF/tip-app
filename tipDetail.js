@@ -343,15 +343,54 @@ $(document).ready(function() {
         // Project length
         tmp = (p.properties['proj_len'] != null) ? p.properties['proj_len'].toLocaleString() : 0;
         $('#proj_len').html(tmp + ' miles');
-        // Existing lane-miles
-        tmp = (p.properties['exist_lane_mi'] != null) ? p.properties['exist_lane_mi'].toLocaleString() : 0;
-        $('#exist_lane_mi').html(tmp + ' lane-miles');
-        // Lane-miles added or improved
-        tmp = (p.properties['lane_mi_added_improved'] != null) ? p.properties['lane_mi_added_improved'].toLocaleString() : 0;
-        $('#lane_mi_added_improved').html(tmp + ' lane-miles');
-        // Total lane-miles
-        tmp = (p.properties['tot_lane_mi'] != null) ? p.properties['tot_lane_mi'].toLocaleString() : 0;
-        $('#tot_lane_mi').html(tmp + ' lane-miles');
+        
+        // ******************************************************************************** 
+        //
+        // WARNING: Grotesque Hack!!!
+        // There is exactly one project in the database for which the term lane-miles doesn't apply, because it is a rail project.
+        // (The project in question has TIP_ID 1570, the Green Line Extension project.
+        // There is no field in the database indicating whether a project is a rail project to interrogate.
+        // So, we are compelled to perform this test AND change the "captions" of three items in the "Overview" tab, based on the project ID.
+        // Please note that this is not a sustainable approach in general, and should be replaced with the addition of a field in the
+        // tip_projects table indicating whether a project is a 'road project, 'rail project', or whatever.
+        //
+        // ******************************************************************************** 
+        if (p.properties['tip_id'] == '1570') {
+            // Project is the Green Line Extension: change captions using the term 'lane-miles' to 'track-miles.'
+            //
+            // Existing 'track-miles'
+            // First: fiddle with caption
+            $('#exist_lane_mi_caption').html('Existing track-miles');
+            // Second: get value, and fiddle with units used to report it
+            tmp = (p.properties['exist_lane_mi'] != null) ? p.properties['exist_lane_mi'].toLocaleString() : 0;
+            $('#exist_lane_mi').html(tmp + ' track-miles');
+            //
+            // 'Track-miles' added or improved
+            // First: fiddle with caption
+            $('#lane_mi_added_improved_caption').html('Track-miles added or improved');
+            tmp = (p.properties['lane_mi_added_improved'] != null) ? p.properties['lane_mi_added_improved'].toLocaleString() : 0;
+            // Second: get value, and fiddle with units used to report it
+            $('#lane_mi_added_improved').html(tmp + ' track-miles');
+            //
+            // Total 'track-miles'
+            $('#tot_lane_mi_caption').html('Total track-miles');
+             // Second: get value, and fiddle with units used to report it
+            tmp = (p.properties['tot_lane_mi'] != null) ? p.properties['tot_lane_mi'].toLocaleString() : 0;
+            $('#tot_lane_mi').html(tmp + ' track-miles');            
+        } else {    
+            // Existing lane-miles
+            tmp = (p.properties['exist_lane_mi'] != null) ? p.properties['exist_lane_mi'].toLocaleString() : 0;
+            $('#exist_lane_mi').html(tmp + ' lane-miles');
+            // Lane-miles added or improved
+            tmp = (p.properties['lane_mi_added_improved'] != null) ? p.properties['lane_mi_added_improved'].toLocaleString() : 0;
+            $('#lane_mi_added_improved').html(tmp + ' lane-miles');
+            // Total lane-miles
+            tmp = (p.properties['tot_lane_mi'] != null) ? p.properties['tot_lane_mi'].toLocaleString() : 0;
+            $('#tot_lane_mi').html(tmp + ' lane-miles');
+        }
+        
+        
+        
         // Sidewalk miles
         tmp = (p.properties['sidewalk_mi'] != null) ? p.properties['sidewalk_mi'].toLocaleString() : 0;
         $('#sidewalk_mi').html(tmp + ' miles');
