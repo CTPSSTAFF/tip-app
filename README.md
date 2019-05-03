@@ -16,10 +16,13 @@ Dependencies on external libraries:
   11. es6string.js
   12. popper.js version 1.14.6
 
-Note on updating the spatial data for this app:
+Instructions on updating the two sets of spatial data (points and lines) for this app will be documented here in detail in future.
+The rough outlines of this process is (for each set of spatial data):
 
-The two sets spatial data (points and lines) for this app are to be updated as follows:
-1. Use the ArcGIS 'Delete Feature' tool to delete all rows from the table tip_admin.tip_spatial
-2. Use the ArGIS 'Append' tool to append rows from a feature class containing the new data (mpodata.tip_spatial) to tip_admin.tip_spatial
-3. (non-action) The database View public.tip_spatial_4app will rematerialize itself, based on the freshly loaded data
-4. Repeat steps (1) through (3) for the table tip_admin.tip_spatial_project_line
+1. Delete the previous set of data from the tip_admin schema of the tip_database
+2. Copy the new data from the cert_act schema of the mpodata database to the tip_admin schema of the tip database
+3. Re-create the SQL 'view' of the data by running the relevant SQL commands (in tip_spatial_4app_view.sql or tip_spatial_line_project_view.sql)
+
+The previously proposed method of using the ArcGIS 'Delete Features' (or 'Truncate') and 'Append' tools was found not to work.
+
+
