@@ -413,7 +413,8 @@ $(document).ready(function() {
         $('#design_stat_date').html(tmp);  
         $('#adds_capacity').html(p.properties['adds_capacity'] === -1 ? 'Yes' : 'No');
         $('#lrtp_project').html(p.properties['lrtp_project'] === -1 ? 'Yes' : 'No');
-        $('#cur_cost_est').html(p.properties['cur_cost_est']); 
+        tmp = tipCommon.moneyFormatter(p.properties['cur_cost_est']);
+        $('#cur_cost_est').html(tmp); 
         // Remove 'Z' - see comment above
         tmp = (p.properties['proj_update_date'] != null) ? p.properties['proj_update_date'].replace('Z','') : '';
         $('#proj_update_date').html(tmp);  
