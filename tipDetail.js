@@ -501,7 +501,7 @@ $(document).ready(function() {
         $('#exist_ped_use_desc').html(ec.properties['exist_ped_use_desc']);
         $('#desired_ped_use').html(ec.properties['desired_ped_use']);
         $('#desired_ped_use_desc').html(ec.properties['desired_ped_use_desc']);
-        $('#prop_ped_countermeas').html(ec.properties['prop_ped_countermea']);
+        $('#prop_ped_countermeas').html(ec.properties['prop_ped_countermeas']);
         $('#ped_countermeas_eval').html(ec.properties['ped_countermeas_eval']);
         $('#ped_countermeas_score').html(ec.properties['ped_countermeas_score']);
         $('#ped_hsip').html(ec.properties['ped_hsip'] === -1 ? 'Yes' : 'No');
@@ -561,7 +561,7 @@ $(document).ready(function() {
         $('#emerg_suppt_fac_names').html(ec.properties['emerg_suppt_fac_names']);
         $('#imprv_emerg_supp_acc').html(ec.properties['imprv_emerg_supp_acc']  === -1 ? 'Yes' : 'No');
         $('#imprv_emerg_supp_desc').html(ec.properties['imprv_emerg_supp_desc']);
-        $('#imprv_emerg_supp_score').html(ec.properties['imprv_emerg_supp_desc']);
+        $('#imprv_emerg_supp_score').html(ec.properties['imprv_emerg_supp_score']);
         $('#trnst_asset_to_good_repair').html(ec.properties['trnst_asset_to_good_repair']  === -1 ? 'Yes' : 'No');
         $('#trnst_asset_imprv_desc').html(ec.properties['trnst_asset_imprv_desc']);
         $('#addr_asset_mgt_plan').html(ec.properties['addr_asset_mgt_plan']  === -1 ? 'Yes' : 'No');
@@ -621,7 +621,7 @@ $(document).ready(function() {
         $('#chg_signal_dealy').html(tmp);
         tmp = (ec.properties['chg_transit_veh_delay'] != null) ? ec.properties['chg_transit_veh_delay'].toLocaleString() + ' hours' : '';
         $('#chg_transit_veh_delay').html(tmp);
-        $('#transit_delay_base_scor').html(ec.properties['transit_delay_base_scor']);
+        $('#transt_delay_base_scor').html(ec.properties['transt_delay_base_scor']);
         $('#imprv_key_bus_rtes').html(ec.properties['imprv_key_bus_rtes']  === -1 ? 'Yes' : 'No');
         $('#transt_delay_bonus_scor').html(ec.properties['transt_delay_bonus_scor']);
         $('#adds_new_sidewalks').html(ec.properties['adds_new_sidewalks']  === -1 ? 'Yes' : 'No');
@@ -639,12 +639,12 @@ $(document).ready(function() {
         $('#imprv_intrmodl_conn_scor').html(ec.properties['imprv_intrmodl_conn_scor']);
         $('#trk_rdwy_cond_desc').html(ec.properties['trk_rdwy_cond_desc']);
         $('#trk_deficiencies_desc').html(ec.properties['trk_deficiencies_desc']);
-        $('#trk_mvmt_improv_asssmt').html(ec.properties['trk_mvmt_improv_asssmt']);
+        $('#trk_mvmt_improv_assmt').html(ec.properties['trk_mvmt_improv_assmt']);
         $('#bottleneck_loc').html(ec.properties['bottleneck_loc']  === -1 ? 'Yes' : 'No');
         $('#improv_trk_mvmt_scor').html(ec.properties['improv_trk_mvmt_scor']);
         $('#veh_delay_chg').html(ec.properties['veh_delay_chg'] + ' seconds');
         $('#reduc_veh_cong_scor').html(ec.properties['reduc_veh_cong_scor']);
-        $('#overall_cp_mgmt_score').html(ec.properties['overall_cp_mgmt_score']);
+        $('#overall_cap_mgmt_score').html(ec.properties['overall_cap_mgmt_score']);
 
         // Evaluation criteria - clean air / clean communities
         $('#in_green_community').html(ec.properties['in_green_community']  === -1 ? 'Yes' : 'No');
@@ -745,13 +745,14 @@ $(document).ready(function() {
         $('#smart_growth_zoning').html(ec.properties['smart_growth_zoning']  === -1 ? 'Yes' : 'No');
         $('#has_commerc_dist_org').html(ec.properties['has_commerc_dist_org']  === -1 ? 'Yes' : 'No');
         $('#commerc_dist_org_name').html(ec.properties['commerc_dist_org_name']);
-        $('#consist_metro_fut_scor').html(ec.properties['consist_metro_fut_scor']);
-        $('#improv_acc_hi_econ_act').html(ec.properties['improv_acc_hi_econ_act']  === -1 ? 'Yes' : 'No');
-        $('#improv_act_ctr_transit_acc').html(ec.properties['improv_act_ctr_transit_acc']  === -1 ? 'Yes' : 'No');
-        $('#improv_act_ctr_ped_acc').html(ec.properties['improv_act_ctr_ped_acc']  === -1 ? 'Yes' : 'No');
-        $('#improv_act_ctr_bike_acc').html(ec.properties['improv_act_ctr_bike_acc']  === -1 ? 'Yes' : 'No');
-        $('#improv_act_ctr_truck_acc').html(ec.properties['improv_act_ctr_truck_acc']  === -1 ? 'Yes' : 'No');
-        $('#improv_act_ctr_truck_acc').html(ec.properties['improv_act_ctr_truck_acc']);
+        $('#consist_metro_fut_scor').html(ec.properties['consist_metro_fut_scor']);      
+        $('#improv_acc_hi_econ_act').html(ec.properties['improv_acc_hi_econ_act']  === -1 ? 'Yes' : 'No');       
+        $('#imp_act_ctr_transit_acc').html(ec.properties['imp_act_ctr_transit_acc']  === -1 ? 'Yes' : 'No');
+        $('#imp_act_ctr_ped_acc').html(ec.properties['imp_act_ctr_ped_acc']  === -1 ? 'Yes' : 'No');
+        $('#imp_act_ctr_bike_acc').html(ec.properties['imp_act_ctr_bike_acc']  === -1 ? 'Yes' : 'No');
+        $('#imp_act_ctr_truck_acc').html(ec.properties['imp_act_ctr_truck_acc']  === -1 ? 'Yes' : 'No');
+        $('#act_ctr_access_scor').html(ec.properties['act_ctr_access_scor']);
+        
         $('#non_tip_invest_type').html(ec.properties['non_tip_invest_type']);
         $('#non_tip_invest_pct').html(ec.properties['non_tip_invest_pct']);
         $('#lev_othr_invest_score').html(ec.properties['lev_othr_invest_score']);
@@ -813,35 +814,36 @@ $(document).ready(function() {
         
         // Proposed funding
         if (has_prop_funding == true && prop_funding.length > 0) {
-            headerLine = '<thead><tr><td></td><td class="columnHeader">FY 2019</td>' +
-                                             '<td class="columnHeader">FY 2020</td>' +
+            headerLine = '<thead><tr><td></td><td class="columnHeader">FY 2020</td>' +
                                              '<td class="columnHeader">FY 2021</td>' +
                                              '<td class="columnHeader">FY 2022</td>' +
                                              '<td class="columnHeader">FY 2023</td>' +
+                                             '<td class="columnHeader">FY 2024</td>' +
                                 '</tr>' +
                           '</thead>';
             fedLine = '<tr><td>Federal Funds</td>' +
-                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[fed_ix].properties['fy2019']) + '</td>' + 
                            '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[fed_ix].properties['fy2020']) + '</td>' + 
                            '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[fed_ix].properties['fy2021']) + '</td>' + 
                            '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[fed_ix].properties['fy2022']) + '</td>' + 
                            '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[fed_ix].properties['fy2023']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[fed_ix].properties['fy2024']) + '</td>' + 
                        '</tr>';
             nonFedLine = '<tr><td>Non-federal Funds</td>' +
-                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[nonfed_ix].properties['fy2019']) + '</td>' + 
                            '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[nonfed_ix].properties['fy2020']) + '</td>' + 
                            '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[nonfed_ix].properties['fy2021']) + '</td>' + 
                            '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[nonfed_ix].properties['fy2022']) + '</td>' + 
                            '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[nonfed_ix].properties['fy2023']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[nonfed_ix].properties['fy2024']) + '</td>' + 
                        '</tr>';
             totalLine = '<tr><td>Federal Funds</td>' +
-                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[total_ix].properties['fy2019']) + '</td>' + 
                            '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[total_ix].properties['fy2020']) + '</td>' + 
                            '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[total_ix].properties['fy2021']) + '</td>' + 
                            '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[total_ix].properties['fy2022']) + '</td>' + 
                            '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[total_ix].properties['fy2023']) + '</td>' + 
+                           '<td class="moneyColumn">' + tipCommon.moneyFormatter(prop_funding[total_ix].properties['fy2024']) + '</td>' + 
                        '</tr>';
-            htmlStr = headerLine + '<tbody>' + fedLine + nonFedLine + totalLine + '</tbody>';             
+            htmlStr = headerLine + '<tbody>' + fedLine + nonFedLine + totalLine + '</tbody>';    
+            $('#proposed_funding_table').html(htmlStr);            
             $('#proposed_funding').show();
         } else {
             $('#proposed_funding').hide();
