@@ -520,7 +520,7 @@ $(document).ready(function() {
         $('#prop_bike_countermeas').html(ec.properties['prop_bike_facilities']);
         $('#prop_bike_bike_fac_desc').html(ec.properties['prop_bike_bike_fac_desc']);
         $('#bike_countermeas_eval').html(ec.properties['bike_countermeas_eval']);
-        $('#bike_countermeas_score').html(ec.properties['bike_countermeas_scor']);
+        $('#bike_countermeas_score').html(ec.properties['bike_countermeas_score']);
         $('#bike_hsip').html(ec.properties['bike_hsip'] === -1 ? 'Yes' : 'No');
         $('#bike_hsip_bonus_score').html(ec.properties['bike_hsip_bonus_score']);
         tmp = (ec.properties['max_cluster_epdo'] != null) ? ec.properties['max_cluster_epdo'].toLocaleString() : '';
@@ -528,12 +528,12 @@ $(document).ready(function() {
         $('#truck_rdwy_deficiency').html(ec.properties['truck_rdwy_deficiency']);
         $('#prop_truck_countermeas').html(ec.properties['prop_truck_countermeas']);
         $('#truck_countermeas_eval').html(ec.properties['truck_countermeas_eval']);
-        $('#truck_countermeas_eval').html(ec.properties['truck_countermeas_eval']);
+        $('#imprv_trk_safety_score').html(ec.properties['imprv_trk_safety_score']);
         $('#trk_safety_bonus_scor').html(ec.properties['trk_safety_bonus_scor']);
         $('#at_grade_rr_xing').html(ec.properties['at_grade_rr_xing'] === -1 ? 'Yes' : 'No');
-        $('#rr_xing_improve').html(ec.properties['rr_xing_improve']);
-        $('#rr_xing_improve').html(ec.properties['rr_xing_improve']);
-        $('#rr_xing_improve_score').html(ec.properties['rr_xing_improve_score']);
+        $('#rr_xing_improv').html(ec.properties['rr_xing_improv']);
+        $('#rr_xing_improv_desc').html(ec.properties['rr_xing_improv_desc']);
+        $('#rr_xing_improv_score').html(ec.properties['rr_xing_improv_score']);
         $('#overall_safety_score').html(ec.properties['overall_safety_score']);
      
         // Evaluation criteria - system preservation
