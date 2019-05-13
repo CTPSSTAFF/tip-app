@@ -774,7 +774,7 @@ $(document).ready(function() {
         var headerLine, fedLine, nonFedLine, totalLine, htmlStr;
         
         // Current funding
-        if (has_cur_funding == true) {
+        if (has_cur_funding == true && cur_funding.length > 0) {
             headerLine = '<thead><tr><td></td>' +
                                      '<td class="columnHeader">FY 2019</td>' +
                                      '<td class="columnHeader">FY 2020</td>' +
