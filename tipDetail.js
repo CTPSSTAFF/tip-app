@@ -327,7 +327,7 @@ $(document).ready(function() {
         }   
 *****/        
 
-        $('#stip_prog').html(p.properties['stip_proj']);
+        $('#stip_prog').html(p.properties['stip_prog']);
         
         // NOTE: The data in the 'projects' table for the following fields may be NULL:
         //       - project length
