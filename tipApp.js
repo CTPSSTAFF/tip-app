@@ -50,8 +50,8 @@
 
 // Stuff pertaining to retrieval of data from TIP database, and the data itself:
 //
-// var wfsServerRoot = location.protocol + '//' + location.hostname + ':8080/geoserver/wfs';
- var wfsServerRoot = location.protocol + '//' + location.hostname + '/maploc/wfs';
+var wfsServerRoot = location.protocol + '//' + location.hostname;
+wfsServerRoot += (location.hostname.includes('appsrvr3')) ? ':8080/geoserver/wfs' : '/maploc/wfs';
 var projectsURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_projects_view&outputformat=json'; 
 var proj_townURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_project_town_view&outputformat=json';
 var city_town_lutURL = wfsServerRoot + '/?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_city_town_lookup&outputformat=json';
