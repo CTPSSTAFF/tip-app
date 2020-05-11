@@ -273,12 +273,20 @@ $(document).ready(function() {
                 tmp_obj.geometry = DATA.projects[i].geometry;
                 town_id =  pt_list[j].properties['town_id'];
                 tmp = _.find(DATA.city_town_lut, function(lut_rec) { return lut_rec['id'] === 'tip_city_town_lookup.' + town_id });
+                // Workaround for Object.assign not being supported by IE, even IE version 11.
+                tmp_props = $.extend({ town_id: pt_list[j].properties['town_id'], 
+                                            town: tmp.properties['town_name'],
+                                            project_town_id : pt_list[j].properties['project_town_id'] 
+                                     },
+                                     DATA.projects[i].properties);
+                /*
                 tmp_props = Object.assign({ town_id: pt_list[j].properties['town_id'], 
                                             town: tmp.properties['town_name'],
                                             project_town_id : pt_list[j].properties['project_town_id'] 
                                           },
                                           DATA.projects[i].properties);
                 tmp_obj.properties = tmp_props;
+                */               
                 DATA.projects_JOIN.push(tmp_obj);
             } // for j
         } // for i     
