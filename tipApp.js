@@ -498,14 +498,14 @@ function queryProjects(e) {
     var ltrp_projects = $('#lrtp_project').prop('checked');
     var in_target_universe = $('#in_target_universe').prop('checked');
     var ctps_study = $('#ctps_study').prop('checked');
-     // var tip_id = $('#select_tip_id option:selected').val();   
+    // var tip_id = $('#select_tip_id option:selected').val();   
     
     // var results = DATA.projects_JOIN;  
     var results = DATA.projects;
     
-    // Per request by Matt Genova, 4/2/2019:
-    // Restrict app to the current year's TIP, i.e., projects with funding_stat == ‘'FYs 2020-24 TIP Programmed'
-    results = _.filter(results, function(proj) { return (proj.properties['funding_stat'] === 'FFYs 2020-24 TIP Programmed'); });
+    // Per agreement between Matt Genova, Paul Reim, Matt Archer, and BK on 5/12/2020:
+    // Restrict app to the current year's TIP, i.e., projects with in_tip_current == -1
+    results = _.filter(results, function(proj) { return (proj.properties['in_tip_current'] === -1); });
     
     // 1. Did the search specify a town?
     if (town !== 'All') {
