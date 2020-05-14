@@ -184,8 +184,10 @@ $(document).ready(function() {
         
         // If project has geographic feature, display on map
         if (p.properties['has_geo'] === -1) {
-            var sQuery = 'cql_filter=tip_id=' + tip_id;
-            var sUrl = wfsServerRoot + '?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_spatial_line_project_4app&srsName=EPSG:4326&outputformat=json&' + sQuery;
+            // Note that TIP IDs may contain non-numeric characters, i.e., they're really character strings,
+            // rather than numbers. Construct the CQL query string accordingly, delimiting the tip_id with single quotes.
+            var sQuery = "cql_filter=tip_id=" + "'" + tip_id + "'";
+            var sUrl = wfsServerRoot + "?service=wfs&version=1.1.0&request=getfeature&typename=tip_viewer:tip_spatial_line_project_4app&srsName=EPSG:4326&outputformat=json&" + sQuery;
             $.ajax({ url		:   sUrl,
                      type		:   'GET',
                      dataType	:   'json',
