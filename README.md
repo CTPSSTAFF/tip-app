@@ -15,9 +15,10 @@ contents of the backing database to 'real' projects and those under serious cons
 shrunk by about an order of magnitude to only around 200-300 projects. In view of this, and in view of the goal
 of simplicity of implementation of this version of the app, the design decision was made to load all relevant
 database tables 'in core' and query them there rather than using AJAX for round-trips to query a database on the server.
+
 By February of 2019, the number of features being requested by the project team for THIS version of the app 
-began to ballon. Although because of major 'functionality creep' it was becoming clear that some of the fundamental
-design choices were being stretched to the breeaking point, at this point it was no longer possible to consider
+began to ballon. Although it was becoming clear that some of the fundamental design choices were being stretched
+to the breeaking point because of major 'functionality creep' , at this point it was no longer possible to consider
 re-architeching the app (e.g., moving some logic to the server, using a more functionally rich mapping platform, etc.),
 because of budget and schedule constrtaints. With a bit of luck, this might be possible in some future year.
 
