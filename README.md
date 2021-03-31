@@ -37,7 +37,7 @@ Dependencies on external libraries:
   8. [underscore.js](https://underscorejs.org/) version 1.9.1
   9. [download.js](http://danml.com/download.html) version 4.2
   10. [turf.js](https://turfjs.org/)
-  11. es6string.js
+  11. [es6string.js](//https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/String/startsWith)
   12. [popper.js](https://popper.js.org/) version 1.14.6 (required by SlickGrid)
  
 In addition, the JavaScript polyfille polfill_for_object_assign.js is required to work-around the lack of support
