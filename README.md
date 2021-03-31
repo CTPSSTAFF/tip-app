@@ -9,12 +9,14 @@ reworking of CTPS's second-generration TIP web app. The basic idea was to bring 
 needs very quickly and at low cost, and leave the re-specification / re-design / re-implementation of something
 more grandiose for the next federal fiscal year. Another, equally important, driving factor was the decision to
 limit the number of projects in the backing database. Previously this database had been populated with both 
-'real' projects (projects under serious consideration for funding( and 'vaporware' projects that were little 
-more than suggestions. The latter class of project vastly bloated the database. With the decision to limit the
-contents of the backing database to 'real' projects and those under serious consideration, the size of the database
-shrunk by about an order of magnitude to only around 200-300 projects. In view of this, and in view of the goal
-of simplicity of implementation of this version of the app, the design decision was made to load all relevant
-database tables 'in core' and query them there rather than using AJAX for round-trips to query a database on the server.
+'real' projects (projects under serious consideration for funding) and 'vaporware' projects that were little 
+more than suggestions. The latter class of project vastly bloated the database. 
+
+With the decision to limit the contents of the backing database to 'real' projects and those under serious consideration, 
+the size of the database shrunk by about an order of magnitude to only around 200-300 projects. In view of this, 
+and in view of the goal of simplicity of implementation of this version of the app, the design decision was made to load
+all relevant tables from the database in memory _once_ at start-up, and query them there rather than use AJAX for
+round-trips to query the database on the server whenever prompted to do so by user action.
 
 By February of 2019, the number of features being requested by the project team for THIS version of the app 
 began to ballon. Although it was becoming clear that some of the fundamental design choices were being stretched
