@@ -27,21 +27,21 @@ because of budget and schedule constrtaints. With a bit of luck, this might be p
 ## External Dependencies
 
 Dependencies on external libraries:
-  1. jQuery version 2.2.4
-  2. jQueryUI verson 1.2.1
-  3. Google Maps API version 3
-  4. Google Maps V3 Utility Library - maplabel.js
-  5. SlickGrid version 2.4.1
-  6. jQuery.event.drag version 2.3.0 (required by SlickGrid)
-  7. jQuery.event.drop version 2.3.0 (required by SlickGrid)
-  8. underscore.js version 1.9.1
-  9. download.js version 4.2
-  10. turf.js
+  1. [jQuery](https://jquery.com/) version 2.2.4
+  2. [jQueryUI](https://jqueryui.com/) verson 1.2.1
+  3. [Google Maps API version 3](https://developers.google.com/maps/documentation/javascript/overview)
+  4. [Google Maps V3 Utility Library](https://github.com/googlemaps/v3-utility-library) - maplabel.js
+  5. [SlickGrid](https://slickgrid.net/Index.html) version 2.4.1 - Note that this is __not__ the original SlickGrid implementation by Michael Lieberman, who stopped supporting it in 2014, but rather a fork of it that is currently being maintained.
+  6. [jQuery.event.drag](https://github.com/threedubmedia/jquery.threedubmedia) version 2.3.0 (required by SlickGrid)
+  7. [jQuery.event.drop](https://github.com/threedubmedia/jquery.threedubmedia) version 2.3.0 (required by SlickGrid)
+  8. [underscore.js](https://underscorejs.org/) version 1.9.1
+  9. [download.js](http://danml.com/download.html) version 4.2
+  10. [turf.js](https://turfjs.org/)
   11. es6string.js
-  12. popper.js version 1.14.6 (required by SlickGrid)
+  12. [popper.js](https://popper.js.org/) version 1.14.6 (required by SlickGrid)
  
 In addition, the JavaScript polyfille polfill_for_object_assign.js is required to work-around the lack of support
-for Object.assign in some recent versions of Internet Explorer.
+for Object.assign in some _recent_ (non-legacy) versions of Internet Explorer.
 
 ## Updating Spatial Data
 
