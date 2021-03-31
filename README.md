@@ -40,7 +40,7 @@ Dependencies on external libraries:
   11. [es6string.js](//https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/String/startsWith)
   12. [popper.js](https://popper.js.org/) version 1.14.6 (required by SlickGrid)
  
-In addition, the JavaScript polyfille polfill_for_object_assign.js is required to work-around the lack of support
+In addition, the JavaScript polyfill polfill_for_object_assign.js is required to work-around the lack of support
 for Object.assign in some _recent_ (non-legacy) versions of Internet Explorer.
 
 ## Updating Spatial Data
