@@ -11,7 +11,7 @@ After having done that, in pgAdmin:
 2. Run the SQL script in this repo named __tip_spatial_line_project_view.sql__
 
 These scripts will create PostgreSQL views named __tip_spatial_4app__, and
-__tip_spatial_line_project_4app
+__tip_spatial_line_project_4app__.
 
 -- B.Krepp 13 May 2020
 
